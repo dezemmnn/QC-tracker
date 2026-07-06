@@ -251,33 +251,30 @@
 <div class="modal-overlay" id="setup-modal">
   <div class="modal">
     <div class="modal-title">⚙️ ตั้งค่าระบบ</div>
-    <div class="modal-sub">แก้ไขได้ทุกเมื่อ — บันทึกจะมีผลทันที</div>
-    <div class="modal-section">
-      <div class="modal-section-title">🔗 Google Sheets Script URL (ไม่บังคับ)</div>
-      <input type="text" id="cfg-url" placeholder="https://script.google.com/macros/s/.../exec">
-      <div class="modal-hint">ถ้าว่าง = เก็บใน localStorage อย่างเดียว | ถ้าใส่ = sync อัตโนมัติทุกครั้งที่ CRUD</div>
+    <div class="modal-sub" id="setup-modal-sub">แก้ไขได้ทุกเมื่อ — บันทึกจะมีผลทันที</div>
+
+    <!-- Admin only -->
+    <div id="admin-only-section">
+      <div class="modal-section">
+        <div class="modal-section-title">🔗 Google Sheets Script URL</div>
+        <input type="text" id="cfg-url" placeholder="https://script.google.com/macros/s/.../exec">
+        <div class="modal-hint">URL ที่ฝังใน HTML จะถูกใช้เสมอ — ช่องนี้ไว้ดู/ทดสอบเท่านั้น</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">👤 Users (Fallback เมื่อ Sheets ไม่ตอบ)</div>
+        <div class="modal-hint">จัดการ user หลักได้ที่ Google Sheets แท็บ <strong>Users</strong> โดยตรง</div>
+        <textarea id="cfg-users" placeholder="admin:admin1234&#10;user1:pass1111" style="margin-top:8px"></textarea>
+      </div>
     </div>
+
+    <!-- ข้อมูล Dropdown — sync จาก Sheets อัตโนมัติ -->
     <div class="modal-section">
-      <div class="modal-section-title">👤 จัดการ Users</div>
-      <div class="modal-hint">✅ Username และ Password เก็บใน Google Sheets แท็บ <strong>"Users"</strong><br>แก้ไข/เพิ่ม/ลบ user ได้โดยตรงใน Sheet เลย ไม่ต้องแก้ที่นี่<br><br>⚠️ ถ้ายังไม่ได้ต่อ Sheets หรือ offline — ระบบจะใช้ข้อมูลด้านล่างแทน (สำรอง)</div>
-      <textarea id="cfg-users" placeholder="admin:admin1234&#10;user1:pass1111" style="margin-top:8px"></textarea>
-    </div>
-    <div class="modal-section">
-      <div class="modal-section-title">👗 ชื่อรุ่น (บรรทัดละรุ่น)</div>
-      <textarea id="cfg-models" style="min-height:70px"></textarea>
-    </div>
-    <div class="modal-section">
-      <div class="modal-section-title">📐 Sizes (คั่นด้วย ,)</div>
-      <input type="text" id="cfg-sizes">
-    </div>
-    <div class="modal-section">
-      <div class="modal-section-title">🎨 สีของแต่ละรุ่น</div>
-      <div class="modal-hint" style="margin-bottom:8px">แต่ละรุ่นมีสีเฉพาะตัว — พิมพ์ชื่อสีคั่นด้วย , | ถ้าว่าง = ใช้สีกลางร่วมกัน</div>
-      <div class="model-color-list" id="model-color-list"></div>
-    </div>
-    <div class="modal-section">
-      <div class="modal-section-title">🏷 สีกลาง (ใช้เมื่อรุ่นนั้นไม่มีสีเฉพาะ หรือพิมพ์สีใหม่เอง)</div>
-      <textarea id="cfg-colors" style="min-height:50px" placeholder="Black, White, Navy, Grey..."></textarea>
+      <div class="modal-section-title">📋 ข้อมูล Dropdown</div>
+      <div class="modal-hint">ชื่อรุ่น, Size, Color, ประเภทตำหนิ — จัดการได้ที่ Google Sheets แท็บ <strong>Options</strong><br>แก้ใน Sheet แล้วกดปุ่มด้านล่างเพื่อโหลดข้อมูลใหม่</div>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <button class="btn-modal-save" onclick="reloadOptions()" style="background:linear-gradient(135deg,#059669,#10B981)">🔄 โหลดข้อมูลจาก Sheets</button>
+        <span id="options-status" style="font-size:12px;color:var(--text-muted)"></span>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="closeSetup()">ยกเลิก</button>
@@ -476,8 +473,12 @@ const LS = { RECORDS:"qc_records", CONFIG:"qc_config", OPTIONS:"qc_options" };
 // ════════════════════════════════════════
 //  DEFAULTS
 // ════════════════════════════════════════
+
+// ★ URL ฝังไว้ที่นี่ — ทุกเครื่องที่เปิดเว็บนี้จะต่อ Sheets อัตโนมัติ ไม่ต้องตั้งค่าเอง ★
+const HARDCODED_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydL1hcjy6saEZHIil_MnpR2s9NIGSPLH9JuXJ7ZTLuaGCc-GDd2MfNIuNHZs0JiqmfZA/exec";
+
 const DEFAULT_CONFIG = {
-  scriptUrl:"",
+  scriptUrl: HARDCODED_SCRIPT_URL,
   users:{"admin":"admin1234","user1":"pass1111","user2":"pass2222","user3":"pass3333","user4":"pass4444"}
 };
 const DEFAULT_OPTIONS = {
@@ -501,6 +502,8 @@ let pendingDeleteId=null, editingId=null;
 // ════════════════════════════════════════
 function loadAll(){
   try{ CFG=JSON.parse(localStorage.getItem(LS.CONFIG))||{...DEFAULT_CONFIG}; }catch(e){ CFG={...DEFAULT_CONFIG}; }
+  // ★ URL ที่ฝังใน HTML มีความสำคัญกว่าเสมอ — ป้องกันกรณี localStorage เก็บ URL เก่า ★
+  if(HARDCODED_SCRIPT_URL) CFG.scriptUrl = HARDCODED_SCRIPT_URL;
   try{ OPTIONS=JSON.parse(localStorage.getItem(LS.OPTIONS))||{...DEFAULT_OPTIONS}; }catch(e){ OPTIONS={...DEFAULT_OPTIONS}; }
   if(!OPTIONS.modelColors) OPTIONS.modelColors={};
   if(!OPTIONS.colors) OPTIONS.colors=DEFAULT_OPTIONS.colors;
@@ -562,13 +565,20 @@ function onEditModelChange(){
 // ════════════════════════════════════════
 //  SETUP MODAL
 // ════════════════════════════════════════
+// รายชื่อ user ที่มีสิทธิ์เข้า admin section
+const ADMIN_USERS = ["admin"];
+
 function openSetup(){
-  document.getElementById("cfg-url").value   = CFG.scriptUrl||"";
-  document.getElementById("cfg-users").value = Object.entries(CFG.users||{}).map(([u,p])=>`${u}:${p}`).join("\n");
-  document.getElementById("cfg-models").value= (OPTIONS.model||[]).join("\n");
-  document.getElementById("cfg-sizes").value = (OPTIONS.size||[]).join(", ");
-  document.getElementById("cfg-colors").value= (OPTIONS.colors||[]).join(", ");
-  renderModelColorList();
+  const isAdmin = ADMIN_USERS.includes(currentUser);
+  document.getElementById("admin-only-section").style.display = isAdmin ? "block" : "none";
+  document.getElementById("setup-modal-sub").textContent = isAdmin
+    ? "โหมด Admin"
+    : "ข้อมูล Dropdown ซิงค์จาก Google Sheets อัตโนมัติ";
+
+  if(isAdmin){
+    document.getElementById("cfg-url").value   = HARDCODED_SCRIPT_URL;
+    document.getElementById("cfg-users").value = Object.entries(CFG.users||{}).map(([u,p])=>`${u}:${p}`).join("\n");
+  }
   document.getElementById("setup-modal").classList.add("open");
 }
 
@@ -586,19 +596,21 @@ function renderModelColorList(){
 
 function closeSetup(){ document.getElementById("setup-modal").classList.remove("open"); }
 
-function saveSetup(){
-  CFG.scriptUrl = document.getElementById("cfg-url").value.trim();
-  const rawUsers= document.getElementById("cfg-users").value.trim();
-  CFG.users={};
-  rawUsers.split("\n").forEach(line=>{ const[u,...r]=line.split(":"); const p=r.join(":").trim(); if(u&&p) CFG.users[u.trim()]=p; });
+async function saveSetup(){
+  const isAdmin = ADMIN_USERS.includes(currentUser);
+  if(isAdmin){
+    if(HARDCODED_SCRIPT_URL) CFG.scriptUrl = HARDCODED_SCRIPT_URL;
+    const rawUsers = document.getElementById("cfg-users").value.trim();
+    CFG.users = {};
+    rawUsers.split("\n").forEach(line=>{ const[u,...r]=line.split(":"); const p=r.join(":").trim(); if(u&&p) CFG.users[u.trim()]=p; });
+    saveCFG();
+  }
 
   const newModels = document.getElementById("cfg-models").value.split("\n").map(s=>s.trim()).filter(Boolean);
-  OPTIONS.model  = newModels;
-  OPTIONS.size   = document.getElementById("cfg-sizes").value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
-  OPTIONS.colors = document.getElementById("cfg-colors").value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
-
-  // อ่านสีแต่ละรุ่น
-  OPTIONS.modelColors = {};
+  OPTIONS.model   = newModels;
+  OPTIONS.size    = document.getElementById("cfg-sizes").value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+  OPTIONS.colors  = document.getElementById("cfg-colors").value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+  OPTIONS.modelColors = OPTIONS.modelColors || {};
   newModels.forEach(m=>{
     const key = `mc-${btoa(encodeURIComponent(m))}`;
     const el  = document.getElementById(key);
@@ -608,11 +620,18 @@ function saveSetup(){
     }
   });
 
-  saveCFG(); saveOptions();
   rebuildDropdowns();
   updateSyncBadge();
   closeSetup();
-  showToast("✅ บันทึกการตั้งค่าเรียบร้อย","success");
+
+  if(CFG.scriptUrl){
+    showToast("💾 กำลัง sync Options ขึ้น Sheets...","");
+    const ok = await saveOptionsToSheets();
+    if(ok) showToast("✅ sync Options สำเร็จ — ทุกคนจะเห็นทันทีตอน login ใหม่","success");
+    else   showToast("⚠️ บันทึกแล้ว แต่ sync Sheets ไม่สำเร็จ","error");
+  } else {
+    showToast("✅ บันทึกการตั้งค่าเรียบร้อย","success");
+  }
 }
 
 // ════════════════════════════════════════
@@ -737,7 +756,10 @@ function comboAddNew(field,value){
   document.getElementById(`f-${field}`).value=value;
   document.getElementById(`combo-${field}`).classList.remove("open");
   if(field==="model") onModelChange();
-  showToast(`✨ เพิ่ม "${value}" ในรายการ ${field} แล้ว`,"success");
+  showToast(`✨ เพิ่ม "${value}" แล้ว — กำลัง sync...`,"success");
+  saveOptionsToSheets().then(ok=>{
+    if(ok) showToast(`✅ "${value}" sync ขึ้น Sheets แล้ว`,"success");
+  });
 }
 
 // ════════════════════════════════════════
@@ -814,7 +836,7 @@ async function doLogin(){
   }
 }
 
-function loginSuccess(u, errEl){
+async function loginSuccess(u, errEl){
   currentUser=u;
   if(errEl) errEl.style.display="none";
   document.getElementById("login-screen").style.display="none";
@@ -822,6 +844,8 @@ function loginSuccess(u, errEl){
   document.getElementById("user-display").textContent=u;
   document.getElementById("user-avatar").textContent=u[0].toUpperCase();
   renderTable(records); updateStats(); updateSyncBadge();
+  // โหลด Options จาก Sheets อัตโนมัติหลัง login
+  await loadOptionsFromSheet(false);
 }
 
 function doLogout(){
@@ -871,19 +895,25 @@ async function submitRecord(){
   saveRecords();
 
   // 2. อัพเดท model colors อัตโนมัติ — จำว่ารุ่นนี้เคยใช้สีนี้
+  let optChanged = false;
   if(model && color){
     if(!OPTIONS.modelColors) OPTIONS.modelColors={};
     if(!OPTIONS.modelColors[model]) OPTIONS.modelColors[model]=[];
     if(!OPTIONS.modelColors[model].includes(color)){
       OPTIONS.modelColors[model].push(color);
       OPTIONS.modelColors[model].sort((a,b)=>a.localeCompare(b,'th'));
-      saveOptions();
+      optChanged = true;
     }
   }
-  // จำ model/size ใหม่
   ["model","size"].forEach(f=>{
-    if(record[f]&&!(OPTIONS[f]||[]).includes(record[f])){ if(!OPTIONS[f]) OPTIONS[f]=[]; OPTIONS[f].push(record[f]); OPTIONS[f].sort((a,b)=>a.localeCompare(b,'th')); saveOptions(); }
+    if(record[f]&&!(OPTIONS[f]||[]).includes(record[f])){
+      if(!OPTIONS[f]) OPTIONS[f]=[];
+      OPTIONS[f].push(record[f]);
+      OPTIONS[f].sort((a,b)=>a.localeCompare(b,'th'));
+      optChanged = true;
+    }
   });
+  if(optChanged) saveOptionsToSheets();
 
   renderTable(getFilteredRecords()); updateStats();
   btn.disabled=false; label.textContent="บันทึกข้อมูล";
@@ -988,11 +1018,15 @@ async function saveEdit(){
   r.updatedBy=currentUser;
   if(CFG.scriptUrl) r.syncStatus="pending";
 
-  // จำสีของรุ่นนี้
+  // จำสีของรุ่นนี้ + sync ขึ้น Sheets
   if(model&&color){
     if(!OPTIONS.modelColors) OPTIONS.modelColors={};
     if(!OPTIONS.modelColors[model]) OPTIONS.modelColors[model]=[];
-    if(!OPTIONS.modelColors[model].includes(color)){ OPTIONS.modelColors[model].push(color); OPTIONS.modelColors[model].sort((a,b)=>a.localeCompare(b,'th')); saveOptions(); }
+    if(!OPTIONS.modelColors[model].includes(color)){
+      OPTIONS.modelColors[model].push(color);
+      OPTIONS.modelColors[model].sort((a,b)=>a.localeCompare(b,'th'));
+      saveOptionsToSheets();
+    }
   }
 
   saveRecords();
@@ -1108,6 +1142,39 @@ let toastTimer;
 function showToast(msg,type=""){
   const t=document.getElementById("toast"); t.textContent=msg; t.className=`show ${type}`;
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.className="",3500);
+}
+
+// ════════════════════════════════════════
+//  LOAD OPTIONS FROM SHEETS
+// ════════════════════════════════════════
+async function loadOptionsFromSheet(showStatus=false){
+  if(!CFG.scriptUrl) return;
+  const statusEl = document.getElementById("options-status");
+  if(statusEl) statusEl.textContent = "กำลังโหลด...";
+  try{
+    const res  = await fetch(`${CFG.scriptUrl}?action=getOptions`);
+    const data = await res.json();
+    if(data.success && data.options){
+      const o = data.options;
+      if(o.model  && o.model.length)  OPTIONS.model  = o.model;
+      if(o.size   && o.size.length)   OPTIONS.size   = o.size;
+      if(o.color  && o.color.length)  OPTIONS.color  = o.color;
+      if(o.defect && o.defect.length) OPTIONS.defect = o.defect;
+      if(o.modelColors) OPTIONS.modelColors = o.modelColors;
+      OPTIONS.colors = OPTIONS.color; // alias
+      saveOptions();
+      rebuildDropdowns();
+      if(statusEl) statusEl.textContent = "✅ โหลดแล้ว " + new Date().toLocaleTimeString('th-TH');
+      if(showStatus) showToast("✅ โหลด Dropdown จาก Sheets แล้ว","success");
+    }
+  }catch(e){
+    if(statusEl) statusEl.textContent = "⚠️ โหลดไม่ได้";
+    if(showStatus) showToast("⚠️ โหลด Options ไม่ได้ — ใช้ข้อมูลเดิม","error");
+  }
+}
+
+async function reloadOptions(){
+  await loadOptionsFromSheet(true);
 }
 
 init();
