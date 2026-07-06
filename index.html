@@ -43,7 +43,6 @@
   .field-group input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(168,85,247,.12);}
   .btn-primary{width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#EC4899);color:white;border:none;border-radius:var(--radius-sm);font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:8px;box-shadow:0 4px 16px rgba(168,85,247,.3);}
   .btn-primary:hover{opacity:.9;}.btn-primary:active{transform:scale(.98);}
-  .btn-primary:disabled{opacity:.6;cursor:default;}
   .login-error{background:#FFF0F0;border:1.5px solid #FECACA;color:#B91C1C;padding:10px 14px;border-radius:var(--radius-xs);font-size:13px;margin-top:12px;display:none;}
 
   /* MODAL */
@@ -84,6 +83,12 @@
   .edit-sev-pill[data-val="ปานกลาง"].active{background:var(--sev-mid-bg);border-color:#FCD34D;color:var(--sev-mid-text);}
   .edit-sev-pill[data-val="มาก"].active{background:var(--sev-high-bg);border-color:#FCA5A5;color:var(--sev-high-text);}
 
+  /* MODEL-COLOR SETUP */
+  .model-color-list{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;padding-right:4px;}
+  .model-color-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;background:var(--surface2);border-radius:8px;padding:8px 10px;}
+  .model-color-row .model-name{font-size:12px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .model-color-row textarea{font-size:11px;min-height:52px;resize:none;}
+
   /* APP */
   #app{display:none;min-height:100vh;}
   .topbar{background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
@@ -100,6 +105,7 @@
   .sync-badge.ok{background:#D6F5EC;border-color:#6EE7B7;color:#065F46;}
   .sync-badge.syncing{background:#EDE0FF;border-color:#C4B5FD;color:#6D28D9;}
   .sync-badge.error{background:#FFE0E0;border-color:#FCA5A5;color:#991B1B;}
+  .sync-badge.offline{background:#F3F0FF;border-color:var(--border);color:var(--text-muted);}
   .sync-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
   .sync-dot.pulse{animation:pulse 1.2s infinite;}
 
@@ -141,7 +147,7 @@
   .combo-dropdown::-webkit-scrollbar{width:4px;}.combo-dropdown::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px;}
   .combo-option{padding:9px 14px;cursor:pointer;font-size:14px;transition:background .1s;}
   .combo-option:hover{background:var(--accent-light);color:var(--accent);}
-  .combo-option.new-item{color:var(--accent);font-weight:700;border-top:1px dashed var(--border);background:var(--surface2);display:flex;align-items:center;gap:4px;}
+  .combo-option.new-item{color:var(--accent);font-weight:700;border-top:1px dashed var(--border);background:var(--surface2);}
   .combo-option.new-item:hover{background:var(--accent-light);}
   .combo-empty{padding:10px 14px;color:var(--text-muted);font-size:13px;font-style:italic;}
   .field select{width:100%;padding:10px 36px 10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--surface2);outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B6FAD' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border-color .15s;}
@@ -217,8 +223,6 @@
   #toast.show{transform:translateY(0);opacity:1;}
   #toast.success{background:linear-gradient(135deg,#059669,#10B981);}
   #toast.error{background:linear-gradient(135deg,#DC2626,#EF4444);}
-  #toast.syncing{background:linear-gradient(135deg,#7C3AED,#A855F7);}
-  #toast.warning{background:linear-gradient(135deg,#D97706,#F59E0B);}
   .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
@@ -227,37 +231,46 @@
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">
       <div class="icon">🧵</div>
-      <div><h1>QC Defect Tracker</h1><p>ระบบบันทิกรุ่นคลาวด์</p></div>
+      <div><h1>QC Defect Tracker</h1><p>ระบบบันทึกตำหนิสินค้า</p></div>
     </div>
     <h2 class="login-title">เข้าสู่ระบบ</h2>
-    <p class="login-sub">ตรวจสอบข้อมูลสิทธิ์ผู้ใช้งานจากคลาวด์ Sheets 100%</p>
+    <p class="login-sub">กรุณากรอก Username และ Password</p>
     <div class="field-group"><label>Username</label><input type="text" id="login-user" placeholder="กรอก username" autocomplete="username"></div>
     <div class="field-group"><label>Password</label><input type="password" id="login-pass" placeholder="กรอก password" autocomplete="current-password"></div>
-    <button class="btn-primary" id="login-btn" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <button class="btn-primary" onclick="doLogin()">เข้าสู่ระบบ</button>
     <div class="login-error" id="login-error">❌ Username หรือ Password ไม่ถูกต้อง</div>
   </div>
 </div>
 
+<!-- SETUP MODAL -->
 <div class="modal-overlay" id="setup-modal">
   <div class="modal">
     <div class="modal-title">⚙️ ตั้งค่าระบบ</div>
     <div class="modal-sub" id="setup-modal-sub">แก้ไขได้ทุกเมื่อ — บันทึกจะมีผลทันที</div>
 
+    <!-- Admin only -->
     <div id="admin-only-section">
       <div class="modal-section">
         <div class="modal-section-title">🔗 Google Sheets Script URL</div>
         <input type="text" id="cfg-url" placeholder="https://script.google.com/macros/s/.../exec">
-        <div class="modal-hint">ลิงก์ติดต่อฐานข้อมูลหลักบนเซิร์ฟเวอร์</div>
+        <div class="modal-hint">URL ที่ฝังใน HTML จะถูกใช้เสมอ — ใช้ค่าที่ฝังในไฟล์นี้เท่านั้น</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">👤 Users (สำรองในหน้านี้ เมื่อไม่มี Script URL)</div>
+        <div class="modal-hint">จัดการ user หลักได้ที่ Google Sheets แท็บ <strong>Users</strong> โดยตรง</div>
+        <textarea id="cfg-users" placeholder="admin:admin1234&#10;user1:pass1111" style="margin-top:8px"></textarea>
       </div>
     </div>
 
+    <!-- ข้อมูล Dropdown — sync จาก Sheets อัตโนมัติ -->
     <div class="modal-section">
       <div class="modal-section-title">📋 ข้อมูล Dropdown</div>
-      <div class="modal-hint">ชื่อรุ่น, Size, Color, ประเภทตำหนิ — จัดการได้ที่ Google Sheets โดยตรง</div>
+      <div class="modal-hint">ชื่อรุ่น, Size, Color, ประเภทตำหนิ — จัดการได้ที่ Google Sheets แท็บ <strong>Options</strong><br>แก้ใน Sheet แล้วกดปุ่มด้านล่างเพื่อโหลดข้อมูลใหม่</div>
       <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <button class="btn-modal-save" onclick="reloadOptions()" style="background:linear-gradient(135deg,#059669,#10B981)">🔄 โหลดข้อมูลจาก Sheets</button>
         <span id="options-status" style="font-size:12px;color:var(--text-muted)"></span>
@@ -270,6 +283,7 @@
   </div>
 </div>
 
+<!-- CONFIRM DELETE MODAL -->
 <div class="modal-overlay" id="confirm-modal">
   <div class="modal confirm-modal">
     <div class="confirm-icon">🗑️</div>
@@ -283,24 +297,40 @@
   </div>
 </div>
 
+<!-- EDIT MODAL -->
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
     <div class="modal-title">✏️ แก้ไขรายการ</div>
     <div class="modal-sub" id="edit-modal-sub"></div>
     <div class="edit-form-grid">
-      <div class="edit-field"><label>ชื่อรุ่น *</label><select id="edit-model" onchange="onEditModelChange()"></select></div>
-      <div class="edit-field"><label>Size *</label><select id="edit-size"></select></div>
-      <div class="edit-field"><label>Color *</label><select id="edit-color"></select></div>
-      <div class="edit-field"><label>ประเภทตำหนิ *</label><select id="edit-defect"></select></div>
+      <div class="edit-field">
+        <label>ชื่อรุ่น *</label>
+        <select id="edit-model" onchange="onEditModelChange()"></select>
+      </div>
+      <div class="edit-field">
+        <label>Size *</label>
+        <select id="edit-size"></select>
+      </div>
+      <div class="edit-field">
+        <label>Color *</label>
+        <select id="edit-color"></select>
+      </div>
+      <div class="edit-field">
+        <label>ประเภทตำหนิ *</label>
+        <select id="edit-defect"></select>
+      </div>
       <div class="edit-field full">
         <label>ระดับความรุนแรง *</label>
         <div class="edit-sev-pills">
           <div class="edit-sev-pill" data-val="น้อย"    onclick="selectEditSev(this)">🟢 น้อย</div>
           <div class="edit-sev-pill" data-val="ปานกลาง" onclick="selectEditSev(this)">🟡 ปานกลาง</div>
-          <div class="edit-sev-pill" data-val="มาก"      onclick="selectEditSev(this)">🔴 มาก</div>
+          <div class="edit-sev-pill" data-val="มาก"     onclick="selectEditSev(this)">🔴 มาก</div>
         </div>
       </div>
-      <div class="edit-field full"><label>หมายเหตุ</label><textarea id="edit-note" rows="2"></textarea></div>
+      <div class="edit-field full">
+        <label>หมายเหตุ</label>
+        <textarea id="edit-note" rows="2"></textarea>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="closeEdit()">ยกเลิก</button>
@@ -309,6 +339,7 @@
   </div>
 </div>
 
+<!-- APP -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-left">
@@ -316,7 +347,7 @@
       <span class="topbar-title">QC Defect Tracker</span>
     </div>
     <div class="topbar-right">
-      <div class="sync-badge ok" id="sync-badge"><div class="sync-dot" id="sync-dot"></div><span id="sync-text">Sheets Connected</span></div>
+      <div class="sync-badge offline" id="sync-badge"><div class="sync-dot" id="sync-dot"></div><span id="sync-text">Cloud only</span></div>
       <button class="btn-topbar" onclick="openSetup()">⚙️ ตั้งค่า</button>
       <div class="user-badge"><div class="user-avatar" id="user-avatar"></div><span id="user-display"></span></div>
       <button class="btn-topbar btn-logout" onclick="doLogout()">ออกจากระบบ</button>
@@ -325,7 +356,7 @@
 
   <div class="main">
     <div class="page-title">บันทึกตำหนิสินค้า</div>
-    <div class="page-sub">ข้อมูลคัดกรองอ้างอิงตรงกับ Google Sheets ระบบคลาวด์ทั้งหมด</div>
+    <div class="page-sub">เวลาทั้งหมดใช้ UTC+7 — บันทึกและตรวจสอบผ่าน Google Sheets เท่านั้น</div>
 
     <div class="pending-banner" id="pending-banner">
       ⏳ มี <span id="pending-count">0</span> รายการรอ sync
@@ -339,6 +370,7 @@
       <div class="stat-card stat-card-mint"   data-emoji="📋"><div class="stat-label">ทั้งหมด</div><div class="stat-value" id="stat-total">0</div></div>
     </div>
 
+    <!-- FORM -->
     <div class="form-card">
       <div class="form-card-header">
         <div class="form-card-icon">✏️</div>
@@ -379,56 +411,51 @@
           <div class="severity-pills">
             <div class="severity-pill" data-val="น้อย"    onclick="selectSeverity(this)">🟢 น้อย</div>
             <div class="severity-pill" data-val="ปานกลาง" onclick="selectSeverity(this)">🟡 ปานกลาง</div>
-            <div class="severity-pill" data-val="มาก"      onclick="selectSeverity(this)">🔴 มาก</div>
+            <div class="severity-pill" data-val="มาก"     onclick="selectSeverity(this)">🔴 มาก</div>
           </div>
         </div>
         <div class="field full">
-          <label>หมายเหตุ / รายละเอียดเพิ่มเติม</label>
-          <textarea id="f-note" placeholder="ระบุรายละเอียดเพิ่มเติม (ถ้ามี)"></textarea>
+          <label>หมายเหตุ (ถ้ามี)</label>
+          <textarea id="f-note" placeholder="รายละเอียดเพิ่มเติม..."></textarea>
         </div>
       </div>
       <div class="form-actions">
-        <button class="btn-secondary" onclick="clearForm()">🧹 ล้างฟอร์ม</button>
-        <button class="btn-submit" id="btn-submit" onclick="submitForm()">💾 บันทึกรายการ</button>
+        <button class="btn-secondary" onclick="resetForm()">ล้างข้อมูล</button>
+        <button class="btn-submit" id="submit-btn" onclick="submitRecord()"><span id="submit-label">บันทึกข้อมูล</span></button>
       </div>
     </div>
 
+    <!-- TABLE -->
     <div class="table-card">
       <div class="table-header">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span class="table-title">ประวัติการบันทึกข้อมูลวันนี้</span>
-          <span class="table-count" id="table-count">0 รายการ</span>
-        </div>
+        <span class="table-title">รายการตำหนิทั้งหมด</span>
+        <span class="table-count" id="table-count">0 รายการ</span>
       </div>
       <div class="filter-bar">
-        <span class="filter-label">ตัวกรอง:</span>
-        <select id="filter-user" onchange="renderTable()"><option value="">ทุกคน</option></select>
-        <select id="filter-model" onchange="renderTable()"><option value="">ทุกรุ่น</option></select>
-        <select id="filter-sev" onchange="renderTable()">
-          <option value="">ทุกความรุนแรง</option>
-          <option value="น้อย">น้อย</option>
-          <option value="ปานกลาง">ปานกลาง</option>
-          <option value="มาก">มาก</option>
-        </select>
+        <select id="filter-model"    onchange="applyFilter()"><option value="">ทุกรุ่น</option></select>
+        <select id="filter-size"     onchange="applyFilter()"><option value="">ทุก Size</option></select>
+        <select id="filter-severity" onchange="applyFilter()"><option value="">ทุกระดับ</option><option>น้อย</option><option>ปานกลาง</option><option>มาก</option></select>
+        <select id="filter-defect"   onchange="applyFilter()"><option value="">ทุกประเภทตำหนิ</option></select>
         <div class="filter-sep"></div>
-        <span class="filter-label">วันที่คัดเลือก:</span>
-        <input type="date" id="filter-date" onchange="renderTable()">
-        <button class="btn-export" onclick="exportToCSV()" style="margin-left:auto">📥 Export CSV</button>
+        <span class="filter-label">📅 ช่วงวันที่</span>
+        <input type="date" id="filter-date-from" onchange="applyFilter()">
+        <span style="font-size:12px;color:var(--text-muted);font-weight:600">ถึง</span>
+        <input type="date" id="filter-date-to"   onchange="applyFilter()">
+        <button class="btn-secondary" style="padding:5px 10px;font-size:11px" onclick="clearDateFilter()">ล้าง</button>
+        <div class="filter-sep"></div>
+        <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th style="width:50px;text-align:center">Sync</th>
-              <th>เวลา (Local)</th>
-              <th>ผู้บันทึก</th>
-              <th>รุ่น / Size / สี</th>
-              <th>ประเภทตำหนิ</th>
-              <th style="width:110px">ความรุนแรง</th>
-              <th style="width:90px;text-align:center">จัดการ</th>
+              <th>Sync</th><th>#</th><th>วันที่</th><th>เวลา</th>
+              <th>รุ่น</th><th>Size</th><th>Color</th><th>ตำหนิ</th><th>ระดับ</th><th>หมายเหตุ</th><th>โดย</th><th>จัดการ</th>
             </tr>
           </thead>
-          <tbody id="defect-tbody"></tbody>
+          <tbody id="records-body">
+            <tr><td colspan="12"><div class="empty-state"><div class="icon">📋</div><p>ยังไม่มีรายการ</p></div></td></tr>
+          </tbody>
         </table>
       </div>
     </div>
@@ -438,506 +465,745 @@
 <div id="toast"></div>
 
 <script>
-  // ตัวแปรเชื่อมโยงสคริปต์หลักของคุณตรงๆ 100%
-  const EMBED_URL = "https://script.google.com/macros/s/AKfycbydL1hcjy6saEZHIil_MnpR2s9NIGSPLH9JuXJ7ZTLuaGCc-GDd2MfNIuNHZs0JiqmfZA/exec";
+// ════════════════════════════════════════
+//  CLOUD-ONLY STATE
+// ════════════════════════════════════════
+// ════════════════════════════════════════
+//  DEFAULTS
+// ════════════════════════════════════════
 
-  const LS = {
-    CFG: "qc_defect_cfg_v2",
-    RECORDS: "qc_defect_records_v2",
-    OPTIONS: "qc_defect_options_v2",
-    USER: "qc_defect_current_user_v2"
-  };
+// ★ URL ฝังไว้ที่นี่ — ทุกเครื่องที่เปิดเว็บนี้จะต่อ Sheets อัตโนมัติ ไม่ต้องตั้งค่าเอง ★
+const HARDCODED_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydL1hcjy6saEZHIil_MnpR2s9NIGSPLH9JuXJ7ZTLuaGCc-GDd2MfNIuNHZs0JiqmfZA/exec";
 
-  let CFG = { scriptUrl: EMBED_URL };
-  let RECORDS = [];
-  let OPTIONS = { model:[], size:[], color:[], defect:[], modelColors:{} };
-  let currentUser = null;
-  let currentSeverity = "";
-  let selectedEditSeverityValue = "";
-  let editTargetId = null;
-  let toastTimer;
+const DEFAULT_CONFIG = {
+  scriptUrl: HARDCODED_SCRIPT_URL,
+  users:{"admin":"admin1234","user1":"pass1111","user2":"pass2222","user3":"pass3333","user4":"pass4444"}
+};
+const DEFAULT_OPTIONS = {
+  model:["Oversized Tee Basic","Oversized Tee Premium","Crop Top Vol.1","Crop Top Vol.2","Polo Shirt Classic","Polo Shirt Sport","Hoodie Fleece","Hoodie Cotton","Jogger Pants","Shorts Casual","Jacket Windbreaker","Dress Midi","Skirt Mini","Cargo Pants"],
+  size:["XS","S","M","L","XL","2XL","3XL","Free Size"],
+  // modelColors: { "ชื่อรุ่น": ["สี1","สี2",...] }  — ถ้าไม่มีใช้ fallback colors
+  modelColors:{},
+  colors:["Black","White","Navy","Grey","Beige","Brown","Olive","Cream","Pink","Red","Blue","Green","Yellow","Orange","Purple","Burgundy","Khaki","Mint","Lavender","Coral"],
+  defect:["ตะเข็บบิด","ตะเข็บหลุด / ไม่ติด","ผ้ารั้ว / หดตัว","ผ้าขาด / มีรู","ผ้าเป็นขุย / ผ้าด้าน","สีซีด / สีไม่สม่ำเสมอ","สีตก","คราบสี / คราบสกปรก","ลวดลายพิมพ์ผิดตำแหน่ง","ลวดลายพิมพ์แตก / ลอก","กระดุมหลวม / หลุด","ซิปติดยาก / ซิปขัด","ป้ายแบรนด์ผิด / หลุด","ขนาดผิด (ไม่ตรง spec)","มีกลิ่น","อื่น ๆ"]
+};
 
-  window.addEventListener("DOMContentLoaded", () => {
-    initData();
-    checkLoginStatus();
+// ════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════
+let CFG={}, OPTIONS={}, records=[];
+let currentUser=null, selectedSeverity="", editingSeverity="";
+let pendingDeleteId=null, editingId=null;
+
+// ════════════════════════════════════════
+//  STORAGE HELPERS
+// ════════════════════════════════════════
+function loadAll(){
+  // Cloud-only mode: ไม่เก็บข้อมูลค้างในเครื่องผู้ใช้
+  CFG = {...DEFAULT_CONFIG};
+  if(HARDCODED_SCRIPT_URL) CFG.scriptUrl = HARDCODED_SCRIPT_URL;
+  OPTIONS = JSON.parse(JSON.stringify(DEFAULT_OPTIONS));
+  if(!OPTIONS.modelColors) OPTIONS.modelColors = {};
+  if(!OPTIONS.colors) OPTIONS.colors = DEFAULT_OPTIONS.colors;
+  records = [];
+}
+function saveCFG(){ /* cloud-only: no local persistence */ }
+function saveRecords(){ /* cloud-only: no local persistence */ }
+
+// บันทึก Options ทั้งหมดขึ้น Sheets (admin กด ⚙️ ตั้งค่า)
+async function saveOptions(){
+  if(!CFG.scriptUrl) return false;
+  try{
+    const res = await fetch(CFG.scriptUrl,{
+      method:"POST",
+      body: JSON.stringify({ action:"saveOptions", options: OPTIONS })
+    });
+    const data = await res.json();
+    return data.success;
+  }catch(e){ return false; }
+}
+
+// เพิ่ม option เดี่ยวๆ โดยไม่ลบของเก่าใน Sheets
+async function addOptionToSheets(type, value, extra=""){
+  if(!CFG.scriptUrl || !value) return;
+  try{
+    await fetch(CFG.scriptUrl,{
+      method:"POST",
+      body: JSON.stringify({ action:"addOption", type, value, extra })
+    });
+  }catch(e){}
+}
+
+// ════════════════════════════════════════
+//  UTC+7
+// ════════════════════════════════════════
+function nowTH(){ return new Date(Date.now()+7*60*60*1000); }
+function fDate(d){ return `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())}`; }
+function fTime(d){ return `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`; }
+function fDT(d){ return `${fDate(d)} ${fTime(d)}`; }
+function splitDT(s){ const p=(s||"").split(" "); return {date:p[0]||"",time:p[1]||""}; }
+function pad(n){ return String(n).padStart(2,"0"); }
+
+// ════════════════════════════════════════
+//  COLOR PER MODEL
+// ════════════════════════════════════════
+/** คืน color list ของรุ่นนั้น ถ้าไม่มีกำหนด = fallback global colors */
+function getColorsForModel(modelName){
+  const mc = OPTIONS.modelColors||{};
+  if(modelName && mc[modelName] && mc[modelName].length>0) return mc[modelName];
+  return OPTIONS.colors||DEFAULT_OPTIONS.colors;
+}
+
+/** เมื่อเลือกรุ่นใน form หลัก → อัพเดท color dropdown */
+function onModelChange(){
+  const model = document.getElementById("f-model").value.trim();
+  const colors = getColorsForModel(model);
+  const hint   = document.getElementById("color-hint");
+  const mc     = OPTIONS.modelColors||{};
+
+  // reset color field
+  document.getElementById("f-color").value = "";
+
+  if(model && mc[model] && mc[model].length>0){
+    hint.textContent = `🎨 ${model} มี ${colors.length} สีเฉพาะรุ่น`;
+  } else if(model){
+    hint.textContent = `ℹ️ ใช้สีกลาง (${colors.length} สี) — กำหนดสีเฉพาะรุ่นได้ใน ⚙️ ตั้งค่า`;
+  } else {
+    hint.textContent = "";
+  }
+}
+
+/** เมื่อเลือกรุ่นใน edit modal */
+function onEditModelChange(){
+  const model  = document.getElementById("edit-model").value;
+  const colors = getColorsForModel(model);
+  const sel    = document.getElementById("edit-color");
+  const cur    = sel.value;
+  sel.innerHTML = `<option value="">— เลือกสี —</option>`;
+  colors.forEach(c=>{ const o=document.createElement("option"); o.value=c; o.textContent=c; if(c===cur) o.selected=true; sel.appendChild(o); });
+}
+
+// ════════════════════════════════════════
+//  SETUP MODAL
+// ════════════════════════════════════════
+// รายชื่อ user ที่มีสิทธิ์เข้า admin section
+const ADMIN_USERS = ["admin"];
+
+function openSetup(){
+  const isAdmin = ADMIN_USERS.includes(currentUser);
+  document.getElementById("admin-only-section").style.display = isAdmin ? "block" : "none";
+  document.getElementById("setup-modal-sub").textContent = isAdmin
+    ? "โหมด Admin"
+    : "ข้อมูล Dropdown ซิงค์จาก Google Sheets อัตโนมัติ";
+
+  if(isAdmin){
+    document.getElementById("cfg-url").value   = HARDCODED_SCRIPT_URL;
+    document.getElementById("cfg-users").value = Object.entries(CFG.users||{}).map(([u,p])=>`${u}:${p}`).join("\n");
+  }
+  document.getElementById("setup-modal").classList.add("open");
+}
+
+function renderModelColorList(){
+  const list = document.getElementById("model-color-list");
+  const models = (OPTIONS.model||[]);
+  const mc = OPTIONS.modelColors||{};
+  list.innerHTML = models.map(m=>`
+    <div class="model-color-row">
+      <div class="model-name" title="${m}">👗 ${m}</div>
+      <textarea id="mc-${btoa(encodeURIComponent(m))}" rows="2" placeholder="Black, White, Navy...">${(mc[m]||[]).join(", ")}</textarea>
+    </div>
+  `).join("");
+}
+
+function closeSetup(){ document.getElementById("setup-modal").classList.remove("open"); }
+
+async function saveSetup(){
+  const isAdmin = ADMIN_USERS.includes(currentUser);
+  if(isAdmin){
+    if(HARDCODED_SCRIPT_URL) CFG.scriptUrl = HARDCODED_SCRIPT_URL;
+    const rawUsers = document.getElementById("cfg-users").value.trim();
+    CFG.users = {};
+    rawUsers.split("\n").forEach(line=>{ const[u,...r]=line.split(":"); const p=r.join(":").trim(); if(u&&p) CFG.users[u.trim()]=p; });
+    saveCFG();
+  }
+
+  const newModels = document.getElementById("cfg-models").value.split("\n").map(s=>s.trim()).filter(Boolean);
+  OPTIONS.model   = newModels;
+  OPTIONS.size    = document.getElementById("cfg-sizes").value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+  OPTIONS.colors  = document.getElementById("cfg-colors").value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+  OPTIONS.modelColors = OPTIONS.modelColors || {};
+  newModels.forEach(m=>{
+    const key = `mc-${btoa(encodeURIComponent(m))}`;
+    const el  = document.getElementById(key);
+    if(el){
+      const colors = el.value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+      if(colors.length>0) OPTIONS.modelColors[m]=colors;
+    }
   });
 
-  function initData() {
-    const localCfg = localStorage.getItem(LS.CFG);
-    if(localCfg) { try{ CFG = JSON.parse(localCfg); if(!CFG.scriptUrl) CFG.scriptUrl=EMBED_URL; }catch(e){} }
-    const localRec = localStorage.getItem(LS.RECORDS);
-    if(localRec) { try{ RECORDS = JSON.parse(localRec); }catch(e){} }
-    const localOpt = localStorage.getItem(LS.OPTIONS);
-    if(localOpt) { try{ OPTIONS = JSON.parse(localOpt); }catch(e){} }
-    document.getElementById("filter-date").value = new Date().toLocaleDateString('en-CA');
+  rebuildDropdowns();
+  updateSyncBadge();
+  closeSetup();
+
+  if(CFG.scriptUrl){
+    showToast("💾 กำลัง sync Options ขึ้น Sheets...","");
+    const ok = await saveOptions();
+    if(ok) showToast("✅ sync Options สำเร็จ — ทุกคนจะเห็นทันทีตอน login ใหม่","success");
+    else   showToast("⚠️ บันทึกแล้ว แต่ sync Sheets ไม่สำเร็จ","error");
+  } else {
+    showToast("✅ บันทึกการตั้งค่าเรียบร้อย","success");
   }
+}
 
-  function checkLoginStatus() {
-    const u = localStorage.getItem(LS.USER);
-    if(u) { currentUser = u; showAppScreen(); } else { showLogin(); }
+// ════════════════════════════════════════
+//  SYNC BADGE
+// ════════════════════════════════════════
+function updateSyncBadge(){
+  const badge=document.getElementById("sync-badge");
+  const dot=document.getElementById("sync-dot");
+  const txt=document.getElementById("sync-text");
+  const pending=records.filter(r=>r.syncStatus==="pending"||r.syncStatus==="fail").length;
+  if(!CFG.scriptUrl){ badge.className="sync-badge offline"; dot.className="sync-dot"; txt.textContent="Cloud unavailable"; }
+  else if(pending>0){ badge.className="sync-badge error"; dot.className="sync-dot"; txt.textContent=`${pending} รอ sync`; }
+  else{ badge.className="sync-badge ok"; dot.className="sync-dot"; txt.textContent="Synced ✓"; }
+  const banner=document.getElementById("pending-banner");
+  if(pending>0&&CFG.scriptUrl){ banner.classList.add("show"); document.getElementById("pending-count").textContent=pending; }
+  else banner.classList.remove("show");
+}
+
+// ════════════════════════════════════════
+//  SHEETS SYNC
+// ════════════════════════════════════════
+async function syncRecord(record){
+  if(!CFG.scriptUrl) return;
+  try{
+    const res=await fetch(CFG.scriptUrl,{method:"POST",body:JSON.stringify({action:"add",record})});
+    const data=await res.json();
+    record.syncStatus=data.success?"synced":"fail";
+  }catch(e){ record.syncStatus="fail"; }
+  saveRecords(); updateSyncBadge(); renderTable(getFilteredRecords());
+}
+
+async function syncUpdate(record){
+  if(!CFG.scriptUrl) return;
+  try{
+    const res=await fetch(CFG.scriptUrl,{method:"POST",body:JSON.stringify({action:"update",record})});
+    const data=await res.json();
+    record.syncStatus=data.success?"synced":"fail";
+  }catch(e){ record.syncStatus="fail"; }
+  saveRecords(); updateSyncBadge(); renderTable(getFilteredRecords());
+}
+
+async function syncDelete(id){
+  if(!CFG.scriptUrl) return;
+  try{
+    await fetch(CFG.scriptUrl,{method:"POST",body:JSON.stringify({action:"delete",id})});
+  }catch(e){}
+}
+
+async function retrySync(){
+  const pending=records.filter(r=>r.syncStatus==="pending"||r.syncStatus==="fail");
+  if(!pending.length) return;
+  const badge=document.getElementById("sync-badge");
+  badge.className="sync-badge syncing";
+  document.getElementById("sync-dot").className="sync-dot pulse";
+  document.getElementById("sync-text").textContent="กำลัง sync...";
+  for(const r of pending) await syncRecord(r);
+  const still=records.filter(r=>r.syncStatus!=="synced"&&r.syncStatus!=="memory").length;
+  if(!still) showToast("✅ Sync ครบแล้ว","success");
+  else showToast(`⚠️ Sync ไม่สำเร็จ ${still} รายการ`,"error");
+}
+
+// ════════════════════════════════════════
+//  COMBOBOX
+// ════════════════════════════════════════
+const blurTimers={};
+
+function getComboList(field){
+  if(field==="color"){
+    // ดึงสีตามรุ่นที่กำลังพิมพ์/เลือก
+    const model=document.getElementById("f-model").value.trim();
+    return getColorsForModel(model);
   }
+  return OPTIONS[field]||[];
+}
 
-  function showLogin() {
-    document.getElementById("login-screen").style.display = "flex";
-    document.getElementById("app").style.display = "none";
-  }
+function buildDropdown(field, filter=""){
+  const drop=document.getElementById(`drop-${field}`);
+  const list=getComboList(field);
+  const q=filter.trim().toLowerCase();
+  const matched=q?list.filter(v=>v.toLowerCase().includes(q)):list;
+  let html=matched.map(v=>`<div class="combo-option" onmousedown="comboSelect('${field}','${escH(v)}')">${hl(v,q)}</div>`).join("");
+  const exact=list.find(v=>v.toLowerCase()===q);
+  if(q&&!exact) html+=`<div class="combo-option new-item" onmousedown="comboAddNew('${field}','${escH(filter.trim())}')">✨ เพิ่ม "<strong>${escH(filter.trim())}</strong>"</div>`;
+  if(!html) html=`<div class="combo-empty">ไม่พบรายการ...</div>`;
+  drop.innerHTML=html;
+}
 
-  function showAppScreen() {
-    document.getElementById("login-screen").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    document.getElementById("user-display").innerText = currentUser;
-    document.getElementById("user-avatar").innerText = currentUser.charAt(0).toUpperCase();
-    renderDefectSelect();
-    renderTable();
-    updateStats();
-    loadOptionsFromSheet(false);
-  }
-
-  function doLogin() {
-    const u = document.getElementById("login-user").value.trim();
-    const p = document.getElementById("login-pass").value.trim();
-    const err = document.getElementById("login-error");
-    const btn = document.getElementById("login-btn");
-    if(!u || !p) return;
-
-    err.style.display = "none";
-    btn.disabled = true;
-    btn.textContent = "กำลังตรวจสอบสิทธิ์...";
-
-    fetch(CFG.scriptUrl, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ action: "login", username: u, password: p })
-    })
-    .then(res => res.json())
-    .then(data => {
-      btn.disabled = false;
-      btn.textContent = "เข้าสู่ระบบ";
-      if(data && data.success) {
-        localStorage.setItem(LS.USER, u);
-        currentUser = u;
-        showAppScreen();
-      } else {
-        err.style.display = "block";
-        err.textContent = `❌ ${data.error || "Username หรือ Password ไม่ถูกต้อง"}`;
+function hl(text,q){ if(!q) return text; const re=new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'); return text.replace(re,'<strong style="color:var(--accent)">$1</strong>'); }
+function escH(s){ return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function comboOpen(field){ clearTimeout(blurTimers[field]); document.getElementById(`combo-${field}`).classList.add("open"); buildDropdown(field,document.getElementById(`f-${field}`).value); }
+function comboBlur(field){ blurTimers[field]=setTimeout(()=>document.getElementById(`combo-${field}`).classList.remove("open"),180); }
+function comboFilter(field){
+  if(field==="model") setTimeout(onModelChange,0); // อัพเดทสีหลัง type
+  buildDropdown(field,document.getElementById(`f-${field}`).value);
+  document.getElementById(`combo-${field}`).classList.add("open");
+}
+function comboSelect(field,value){
+  document.getElementById(`f-${field}`).value=value;
+  document.getElementById(`combo-${field}`).classList.remove("open");
+  if(field==="model") onModelChange();
+}
+function comboAddNew(field,value){
+  // สำหรับ model/size เพิ่มใน OPTIONS
+  // สำหรับ color — เพิ่มใน modelColors ของรุ่นปัจจุบัน หรือ global colors
+  if(field==="color"){
+    const model=document.getElementById("f-model").value.trim();
+    if(model){
+      if(!OPTIONS.modelColors) OPTIONS.modelColors={};
+      if(!OPTIONS.modelColors[model]) OPTIONS.modelColors[model]=getColorsForModel(model).slice();
+      if(!OPTIONS.modelColors[model].includes(value)){
+        OPTIONS.modelColors[model].push(value);
+        OPTIONS.modelColors[model].sort((a,b)=>a.localeCompare(b,'th'));
       }
-    })
-    .catch(e => {
-      btn.disabled = false;
-      btn.textContent = "เข้าสู่ระบบ";
-      err.style.display = "block";
-      err.textContent = "❌ ไม่สามารถติดต่อคลาวด์ Google Sheets ได้";
-    });
-  }
-
-  function doLogout() {
-    localStorage.removeItem(LS.USER);
-    currentUser = null;
-    showLogin();
-  }
-
-  function renderDefectSelect() {
-    const defectSel = document.getElementById('f-defect');
-    if(!defectSel) return;
-    defectSel.innerHTML = '<option value="">— เลือกประเภทตำหนิ —</option>';
-    (OPTIONS.defect || []).forEach(item => {
-      defectSel.innerHTML += `<option value="${item}">${item}</option>`;
-    });
-    
-    // ตั้งค่ากล่องค้นหาของตารางกรองด้วย
-    const fModel = document.getElementById("filter-model");
-    if(fModel) {
-      fModel.innerHTML = '<option value="">ทุกรุ่น</option>';
-      (OPTIONS.model || []).forEach(x => { fModel.innerHTML += `<option value="${x}">${x}</option>`; });
-    }
-    const fUser = document.getElementById("filter-user");
-    if(fUser) {
-      fUser.innerHTML = '<option value="">ทุกคน</option>';
-      const usersSet = new Set();
-      RECORDS.forEach(r => { if(r.user) usersSet.add(r.user); });
-      Array.from(usersSet).forEach(u => { fUser.innerHTML += `<option value="${u}">${u}</option>`; });
-    }
-  }
-
-  // --- COMBOBOX LOGIC ---
-  function comboOpen(type) {
-    document.getElementById(`combo-${type}`).classList.add('open');
-    comboFilter(type);
-  }
-
-  function comboBlur(type) {
-    setTimeout(() => {
-      document.getElementById(`combo-${type}`).classList.remove('open');
-    }, 250);
-  }
-
-  function comboFilter(type) {
-    const input = document.getElementById(`f-${type}`);
-    const filter = input.value.trim();
-    const dropdown = document.getElementById(`drop-${type}`);
-    if(!dropdown) return;
-
-    let list = OPTIONS[type] || [];
-
-    // กรณีคัดกรองช่องสีอิงตามโมเดลปัจจุบัน
-    if(type === 'color') {
-      const modelVal = document.getElementById("f-model").value.trim();
-      if(modelVal && OPTIONS.modelColors) {
-        const foundKey = Object.keys(OPTIONS.modelColors).find(k => k.toLowerCase() === modelVal.toLowerCase());
-        if(foundKey) list = OPTIONS.modelColors[foundKey];
-      }
-      if(list.length === 0 && OPTIONS.color) list = OPTIONS.color;
-    }
-
-    let filtered = list.filter(item => String(item).toLowerCase().includes(filter.toLowerCase()));
-    dropdown.innerHTML = '';
-
-    filtered.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'combo-option';
-      div.innerText = item;
-      div.onmousedown = () => {
-        input.value = item;
-        if(type === 'model') handleModelInputChange(item);
-      };
-      dropdown.appendChild(div);
-    });
-
-    // ✨ สร้างตัวเลือกใหม่หากไม่ซ้ำในฐานคลาวด์ตัวเลือกเดิม
-    if (filter !== '' && !list.map(o => String(o).toLowerCase()).includes(filter.toLowerCase())) {
-      const addNewDiv = document.createElement('div');
-      addNewDiv.className = 'combo-option new-item';
-      addNewDiv.innerText = `➕ เพิ่ม${type === 'model' ? 'รุ่น' : type}ใหม่: "${filter}"`;
-      addNewDiv.onmousedown = () => {
-        createNewOptionOnSheets(type, filter);
-      };
-      dropdown.appendChild(addNewDiv);
-    }
-  }
-
-  function handleModelInputChange(modelVal) {
-    const colorInput = document.getElementById("f-color");
-    const hintEl = document.getElementById("color-hint");
-    if(!colorInput) return;
-
-    if(!modelVal.trim()) {
-      colorInput.placeholder = "เลือกรุ่นก่อน...";
-      if(hintEl) hintEl.textContent = "";
-      return;
-    }
-
-    let allowedColors = [];
-    if(OPTIONS.modelColors) {
-      const foundKey = Object.keys(OPTIONS.modelColors).find(k => k.toLowerCase() === modelVal.trim().toLowerCase());
-      if(foundKey) allowedColors = OPTIONS.modelColors[foundKey];
-    }
-
-    if(allowedColors.length > 0) {
-      colorInput.placeholder = "เลือกหรือพิมพ์สี...";
-      if(hintEl) hintEl.textContent = `💡 พบสีตรงรุ่น ${allowedColors.length} สี บนระบบคลาวด์`;
     } else {
-      colorInput.placeholder = "พิมพ์ชื่อสีใหม่ได้ทันที...";
-      if(hintEl) hintEl.textContent = "✨ รุ่นใหม่: ปลดล็อกระบุชุดสีอิสระแล้วพิมพ์ต่อท้ายได้เลย";
+      if(!OPTIONS.colors.includes(value)){ OPTIONS.colors.push(value); OPTIONS.colors.sort((a,b)=>a.localeCompare(b,'th')); }
     }
+  } else {
+    if(!OPTIONS[field]) OPTIONS[field]=[];
+    if(!OPTIONS[field].includes(value)){ OPTIONS[field].push(value); OPTIONS[field].sort((a,b)=>a.localeCompare(b,'th')); }
+  }
+  saveOptions();
+  document.getElementById(`f-${field}`).value=value;
+  document.getElementById(`combo-${field}`).classList.remove("open");
+  if(field==="model") onModelChange();
+  showToast(`✨ เพิ่ม "${value}" แล้ว — กำลัง sync...`,"success");
+  // เพิ่มเฉพาะตัวนี้ขึ้น Sheets โดยไม่ลบของเก่า
+  if(field==="color"){
+    const model=document.getElementById("f-model").value.trim();
+    if(model) addOptionToSheets("modelColor", value, model);
+    else addOptionToSheets("color", value);
+  } else {
+    addOptionToSheets(field, value);
+  }
+}
+
+// ════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════
+function init(){
+  loadAll();
+  rebuildDropdowns();
+  updateSyncBadge();
+  document.getElementById("login-pass").addEventListener("keydown",e=>{ if(e.key==="Enter") doLogin(); });
+  document.getElementById("login-user").addEventListener("keydown",e=>{ if(e.key==="Enter") document.getElementById("login-pass").focus(); });
+  document.addEventListener("click",e=>{
+    ["model","size","color"].forEach(f=>{ if(!document.getElementById(`combo-${f}`).contains(e.target)) document.getElementById(`combo-${f}`).classList.remove("open"); });
+  });
+}
+
+function rebuildDropdowns(){
+  fillSelect("f-defect",OPTIONS.defect||[]);
+  fillSelectFromArr("filter-model",OPTIONS.model||[],"ทุกรุ่น");
+  fillSelectFromArr("filter-size",OPTIONS.size||[],"ทุก Size");
+  fillSelectFromArr("filter-defect",OPTIONS.defect||[],"ทุกประเภทตำหนิ");
+}
+function fillSelect(id,arr){ const sel=document.getElementById(id); const ph=sel.options[0]; sel.innerHTML=""; sel.appendChild(ph); arr.forEach(v=>{ const o=document.createElement("option"); o.value=v; o.textContent=v; sel.appendChild(o); }); }
+function fillSelectFromArr(id,arr,ph){ const sel=document.getElementById(id); sel.innerHTML=`<option value="">${ph}</option>`; arr.forEach(v=>{ const o=document.createElement("option"); o.value=v; o.textContent=v; sel.appendChild(o); }); }
+
+// ════════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════════
+async function doLogin(){
+  const u   = document.getElementById("login-user").value.trim();
+  const p   = document.getElementById("login-pass").value;
+  const err = document.getElementById("login-error");
+  const btn = document.querySelector(".btn-primary");
+
+  if(!u || !p){
+    err.textContent="❌ กรุณากรอก Username และ Password";
+    err.style.display="block";
+    return;
   }
 
-  function createNewOptionOnSheets(type, newValue) {
-    if(!confirm(`ต้องการเพิ่มรายการใหม่ "${newValue}" ลงในชุดฐานข้อมูล Google Sheets ใช่หรือไม่?`)) return;
-
-    showToast(`กำลังลงทะเบียนข้อมูลใหม่ขึ้น Sheets...`, "syncing");
-
-    fetch(CFG.scriptUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        action: 'addNewOption',
-        type: type,
-        value: newValue
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if(data && data.success) {
-        showToast(`เพิ่มข้อมูล "${newValue}" สำเร็จแล้ว!`, 'success');
-        // อัปเดตโครงสร้างฟรอนต์เอนด์ชั่วคราว
-        if(!OPTIONS[type].includes(newValue)) OPTIONS[type].push(newValue);
-        localStorage.setItem(LS.OPTIONS, JSON.stringify(OPTIONS));
-        
-        document.getElementById(`f-${type}`).value = newValue;
-        if(type === 'model') handleModelInputChange(newValue);
-        renderDefectSelect();
-      } else {
-        showToast("⚠️ ไม่สามารถบันทึกตัวเลือกใหม่ได้", "error");
-      }
-    })
-    .catch(err => {
-      showToast('❌ การส่งข้อมูลตัวเลือกใหม่ผิดพลาด', 'error');
-    });
-  }
-
-  async function loadOptionsFromSheet(showStatus=false){
-    if(!CFG.scriptUrl) return;
-    const statusEl = document.getElementById("options-status");
-    if(statusEl) statusEl.textContent = "กำลังโหลด...";
+  // ── มี Script URL → ใช้ Google Sheets เท่านั้น ไม่มี fallback ──
+  if(CFG.scriptUrl){
+    btn.textContent="กำลังตรวจสอบ..."; btn.disabled=true;
     try{
-      const res  = await fetch(`${CFG.scriptUrl}?action=getOptions`);
-      const data = await res.json();
-      if(data.success && data.options){
-        const o = data.options;
-        OPTIONS.model = o.model || [];
-        OPTIONS.size = o.size || [];
-        OPTIONS.color = o.color || [];
-        OPTIONS.defect = o.defect || [];
-        OPTIONS.modelColors = o.modelColors || {};
-        
-        localStorage.setItem(LS.OPTIONS, JSON.stringify(OPTIONS));
-        renderDefectSelect();
-        
-        if(statusEl) statusEl.textContent = "✅ อัปเดตเมื่อ: " + new Date().toLocaleTimeString('th-TH');
-        if(showStatus) showToast("✅ อัปเดตตัวเลือกทั้งหมดตรงชีทแล้ว","success");
-      }
-    }catch(err){
-      if(statusEl) statusEl.textContent = "❌ เชื่อมต่อพลาด";
-    }
-  }
-  function reloadOptions() { loadOptionsFromSheet(true); }
-
-  // --- SUBMIT & RECORD MANAGEMENT ---
-  function selectSeverity(element) {
-    document.querySelectorAll('.severity-pill').forEach(el => el.classList.remove('active'));
-    element.classList.add('active');
-    currentSeverity = element.getAttribute('data-val');
-  }
-
-  function selectEditSev(element) {
-    document.querySelectorAll('.edit-sev-pill').forEach(el => el.classList.remove('active'));
-    element.classList.add('active');
-    selectedEditSeverityValue = element.getAttribute('data-val');
-  }
-
-  function clearForm() {
-    document.getElementById('f-model').value = '';
-    document.getElementById('f-size').value = '';
-    document.getElementById('f-color').value = '';
-    document.getElementById('f-defect').value = '';
-    document.getElementById('f-note').value = '';
-    document.querySelectorAll('.severity-pill').forEach(el => el.classList.remove('active'));
-    currentSeverity = "";
-    document.getElementById("color-hint").textContent = "";
-  }
-
-  function submitForm() {
-    const model = document.getElementById('f-model').value.trim();
-    const size = document.getElementById('f-size').value.trim();
-    const color = document.getElementById('f-color').value.trim();
-    const defect = document.getElementById('f-defect').value;
-    const note = document.getElementById('f-note').value.trim();
-
-    if(!model || !size || !color || !defect || !currentSeverity) {
-      showToast('❌ กรุณากรอกข้อมูลที่จำเป็น (*) ให้ครบถ้วน', 'error');
-      return;
-    }
-
-    const now = new Date();
-    const offset = 7 * 60;
-    const localTime = new Date(now.getTime() + (offset + now.getTimezoneOffset()) * 60000);
-    
-    const newRec = {
-      id: "ID-" + Date.now() + "-" + Math.floor(Math.random()*1000),
-      timestamp: localTime.toISOString().replace("T"," ").substring(0,19),
-      user: currentUser, model: model, size: size, color: color, defect: defect, severity: currentSeverity, note: note, sync: "pending"
-    };
-
-    RECORDS.unshift(newRec);
-    localStorage.setItem(LS.RECORDS, JSON.stringify(RECORDS));
-    clearForm();
-    renderTable();
-    updateStats();
-    showToast('💾 บันทึกลงเครื่องเรียบร้อย กำลังซิงก์ขึ้นชีท...', 'success');
-    syncRecordToSheet(newRec);
-  }
-
-  async function syncRecordToSheet(rec) {
-    if(!CFG.scriptUrl) return;
-    updateRecordSyncStatus(rec.id, "syncing");
-    try {
-      await fetch(CFG.scriptUrl, {
-        method: "POST", mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "add", record: rec })
+      const res  = await fetch(CFG.scriptUrl, {
+        method: "POST",
+        body:   JSON.stringify({ action:"login", username:u, password:p })
       });
-      updateRecordSyncStatus(rec.id, "synced");
-    } catch(e) {
-      updateRecordSyncStatus(rec.id, "fail");
-    }
-  }
+      const data = await res.json();
+      btn.textContent="เข้าสู่ระบบ"; btn.disabled=false;
 
-  function updateRecordSyncStatus(id, status) {
-    const idx = RECORDS.findIndex(r => r.id === id);
-    if(idx !== -1) {
-      RECORDS[idx].sync = status;
-      localStorage.setItem(LS.RECORDS, JSON.stringify(RECORDS));
-      renderTable();
-      checkSyncStatus();
-    }
-  }
-
-  function checkSyncStatus() {
-    const pending = RECORDS.filter(r => r.sync === "pending" || r.sync === "fail").length;
-    const badge = document.getElementById("sync-badge");
-    const text = document.getElementById("sync-text");
-    const banner = document.getElementById("pending-banner");
-    
-    if(pending > 0) {
-      badge.className = "sync-badge error";
-      text.textContent = `${pending} รอ Sync`;
-      if(banner) { banner.style.display = "flex"; document.getElementById("pending-count").textContent = pending; }
-    } else {
-      badge.className = "sync-badge ok";
-      text.textContent = "Sheets Connected";
-      if(banner) banner.style.display = "none";
-    }
-  }
-
-  function retrySync() { RECORDS.filter(r => r.sync === "pending" || r.sync === "fail").forEach(r => syncRecordToSheet(r)); }
-
-  // --- RENDER & MODAL ACTIONS ---
-  function renderTable() {
-    const tbody = document.getElementById("defect-tbody"); if(!tbody) return;
-    const fUser = document.getElementById("filter-user").value;
-    const fModel = document.getElementById("filter-model").value;
-    const fSev = document.getElementById("filter-sev").value;
-    const fDate = document.getElementById("filter-date").value;
-    
-    let filtered = RECORDS;
-    if(fUser)  filtered = filtered.filter(r => r.user === fUser);
-    if(fModel) filtered = filtered.filter(r => r.model === fModel);
-    if(fSev)   filtered = filtered.filter(r => r.severity === fSev);
-    if(fDate)  filtered = filtered.filter(r => r.timestamp && r.timestamp.startsWith(fDate));
-    
-    document.getElementById("table-count").textContent = `${filtered.length} รายการ`;
-    if(filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">🔍</div><p>ไม่พบประวัติข้อมูล</p></div></td></tr>`; return;
-    }
-    let html = "";
-    filtered.forEach(r => {
-      let syncIcon = `<span class="row-sync local"></span>`;
-      if(r.sync === "synced")  syncIcon = `<span class="row-sync synced"></span>`;
-      if(r.sync === "syncing") syncIcon = `<span class="row-sync pending"></span>`;
-      if(r.sync === "fail")    syncIcon = `<span class="row-sync fail"></span>`;
-      let sevClass = r.severity === "มาก" ? "high" : (r.severity === "ปานกลาง" ? "mid" : "low");
-      html += `<tr>
-        <td style="text-align:center">${syncIcon}</td>
-        <td class="text-muted">${r.timestamp?r.timestamp.substring(11,16):"--:--"}</td>
-        <td><strong>${r.user||"—"}</strong></td>
-        <td><span class="chip chip-purple">${r.model}</span> <span class="chip chip-gray">${r.size}</span><br><small class="text-muted">🎨 สี: ${r.color}</small></td>
-        <td><strong>${r.defect}</strong>${r.note?`<div style="font-size:11px;color:var(--text-muted)">📝 ${r.note}</div>`:""}</td>
-        <td><span class="sev-chip sev-chip-${sevClass}">${r.severity}</span></td>
-        <td><div class="row-actions"><button class="btn-edit" onclick="openEdit('${r.id}')">✏️</button><button class="btn-del" onclick="openConfirm('${r.id}')">🗑️</button></div></td>
-      </tr>`;
-    });
-    tbody.innerHTML = html;
-  }
-
-  function updateStats() {
-    const dStr = new Date().toLocaleDateString('en-CA');
-    document.getElementById("stat-total").textContent = RECORDS.length;
-    document.getElementById("stat-today").textContent = RECORDS.filter(r => r.timestamp && r.timestamp.startsWith(dStr)).length;
-    document.getElementById("stat-high").textContent = RECORDS.filter(r => r.severity === "มาก").length;
-    document.getElementById("stat-mid").textContent = RECORDS.filter(r => r.severity === "ปานกลาง").length;
-  }
-
-  function openEdit(id) {
-    const r = RECORDS.find(x => x.id === id); if(!r) return;
-    editTargetId = id; document.getElementById("edit-modal-sub").textContent = `รหัสรายการ: ${id}`;
-    
-    const buildSelect = (id, list) => {
-      const el = document.getElementById(id); if(!el) return;
-      el.innerHTML = '<option value="">— เลือกข้อความ —</option>';
-      list.forEach(x => { el.innerHTML += `<option value="${x}">${x}</option>`; });
-    };
-    
-    buildSelect("edit-model", OPTIONS.model || []);
-    buildSelect("edit-size", OPTIONS.size || []);
-    buildSelect("edit-defect", OPTIONS.defect || []);
-    
-    document.getElementById("edit-model").value = r.model; onEditModelChange();
-    document.getElementById("edit-size").value = r.size; document.getElementById("edit-color").value = r.color;
-    document.getElementById("edit-defect").value = r.defect; document.getElementById("edit-note").value = r.note || "";
-    
-    selectedEditSeverityValue = r.severity;
-    document.querySelectorAll(".edit-sev-pill").forEach(p => {
-      p.classList.toggle("active", p.getAttribute("data-val") === r.severity);
-    });
-    document.getElementById("edit-modal").classList.add("open");
-  }
-
-  function onEditModelChange() {
-    const mVal = document.getElementById("edit-model").value;
-    const colorSel = document.getElementById("edit-color"); if(!colorSel) return;
-    let allowedColors = [];
-    if(mVal && OPTIONS.modelColors) {
-      const foundKey = Object.keys(OPTIONS.modelColors).find(k => k.toLowerCase() === mVal.toLowerCase());
-      if(foundKey) allowedColors = OPTIONS.modelColors[foundKey];
-    }
-    if(allowedColors.length === 0 && OPTIONS.color) allowedColors = OPTIONS.color;
-    colorSel.innerHTML = '<option value="">— เลือกสี —</option>';
-    allowedColors.forEach(c => { colorSel.innerHTML += `<option value="${c}">${c}</option>`; });
-  }
-
-  function closeEdit() { document.getElementById("edit-modal").classList.remove("open"); }
-  
-  function saveEdit() {
-    const idx = RECORDS.findIndex(x => x.id === editTargetId); if(idx === -1) return;
-    RECORDS[idx].model = document.getElementById("edit-model").value;
-    RECORDS[idx].size = document.getElementById("edit-size").value;
-    RECORDS[idx].color = document.getElementById("edit-color").value;
-    RECORDS[idx].defect = document.getElementById("edit-defect").value;
-    RECORDS[idx].note = document.getElementById("edit-note").value.trim();
-    RECORDS[idx].severity = selectedEditSeverityValue;
-    RECORDS[idx].sync = "pending";
-    
-    localStorage.setItem(LS.RECORDS, JSON.stringify(RECORDS));
-    closeEdit(); renderTable(); updateStats(); showToast("✏️ แก้ไขข้อมูลบันทึกสำเร็จ","success");
-    if(CFG.scriptUrl) {
-      fetch(CFG.scriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "update", record: RECORDS[idx] }) })
-      .then(() => updateRecordSyncStatus(editTargetId, "synced"));
-    }
-  }
-
-  function openConfirm(id) {
-    const r = RECORDS.find(x => x.id === id); if(!r) return;
-    document.getElementById("confirm-detail").textContent = `รุ่น: ${r.model} | สี: ${r.color} | ตำหนิ: ${r.defect}`;
-    document.getElementById("confirm-ok-btn").onclick = () => {
-      const idx = RECORDS.findIndex(x => x.id === id);
-      if(idx !== -1) {
-        RECORDS.splice(idx, 1); localStorage.setItem(LS.RECORDS, JSON.stringify(RECORDS));
-        renderTable(); updateStats(); closeConfirm(); showToast("🗑️ ลบรายการเรียบร้อย","success");
-        if(CFG.scriptUrl) fetch(CFG.scriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "delete", id: id }) });
+      if(data.success){
+        loginSuccess(u, err);
+      } else {
+        err.textContent = "❌ " + (data.error || "Username หรือ Password ไม่ถูกต้อง");
+        err.style.display="block";
+        document.getElementById("login-pass").value="";
       }
-    };
-    document.getElementById("confirm-modal").classList.add("open");
-  }
-  function closeConfirm() { document.getElementById("confirm-modal").classList.remove("open"); }
-  function openSetup() { document.getElementById("cfg-url").value = CFG.scriptUrl; document.getElementById("setup-modal").classList.add("open"); }
-  function closeSetup() { document.getElementById("setup-modal").classList.remove("open"); }
-  function saveSetup() {
-    const url = document.getElementById("cfg-url").value.trim(); if(url) CFG.scriptUrl = url;
-    localStorage.setItem(LS.CFG, JSON.stringify(CFG)); closeSetup(); showToast("⚙️ บันทึกการตั้งค่าแล้ว","success"); loadOptionsFromSheet(false);
+    } catch(e){
+      btn.textContent="เข้าสู่ระบบ"; btn.disabled=false;
+      err.textContent="❌ เชื่อมต่อ Google Sheets ไม่ได้ — ตรวจ Script URL หรือ internet";
+      err.style.display="block";
+    }
+    return; // หยุดที่นี่เสมอ ไม่ fallback ไปข้อมูลในเครื่อง
   }
 
-  function exportToCSV() {
-    let csv = "\uFEFFID,Timestamp,User,Model,Size,Color,Defect,Severity,Note\n";
-    RECORDS.forEach(r => { csv += `"${r.id}","${r.timestamp}","${r.user}","${r.model}","${r.size}","${r.color}","${r.defect}","${r.severity}","${r.note||""}"\n`; });
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `QC_Report_${new Date().toLocaleDateString('en-CA')}.csv`; a.click();
+  // ── ไม่มี Script URL → ใช้ user สำรองในหน้านี้เท่านั้น ──
+  if(CFG.users && CFG.users[u] && CFG.users[u]===p){
+    loginSuccess(u, err);
+  } else {
+    err.textContent="❌ Username หรือ Password ไม่ถูกต้อง";
+    err.style.display="block";
+    document.getElementById("login-pass").value="";
+  }
+}
+
+async function loginSuccess(u, errEl){
+  currentUser=u;
+  if(errEl) errEl.style.display="none";
+  document.getElementById("login-screen").style.display="none";
+  document.getElementById("app").style.display="block";
+  document.getElementById("user-display").textContent=u;
+  document.getElementById("user-avatar").textContent=u[0].toUpperCase();
+  renderTable(records); updateStats(); updateSyncBadge();
+  // โหลด Options จาก Sheets อัตโนมัติหลัง login
+  await loadOptionsFromSheet(false);
+}
+
+function doLogout(){
+  currentUser=null;
+  document.getElementById("app").style.display="none";
+  document.getElementById("login-screen").style.display="flex";
+  document.getElementById("login-user").value="";
+  document.getElementById("login-pass").value="";
+  // reset login button
+  const btn=document.querySelector(".btn-primary");
+  btn.textContent="เข้าสู่ระบบ"; btn.disabled=false;
+  resetForm();
+}
+
+// ════════════════════════════════════════
+//  FORM (CREATE)
+// ════════════════════════════════════════
+function selectSeverity(el){ document.querySelectorAll(".severity-pill").forEach(p=>p.classList.remove("active")); el.classList.add("active"); selectedSeverity=el.dataset.val; }
+function resetForm(){
+  ["f-model","f-size","f-color"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("f-defect").selectedIndex=0;
+  document.getElementById("f-note").value="";
+  document.querySelectorAll(".severity-pill").forEach(p=>p.classList.remove("active"));
+  selectedSeverity=""; onModelChange();
+}
+
+async function submitRecord(){
+  const model=document.getElementById("f-model").value.trim();
+  const size=document.getElementById("f-size").value.trim();
+  const color=document.getElementById("f-color").value.trim();
+  const defect=document.getElementById("f-defect").value;
+  const note=document.getElementById("f-note").value.trim();
+  if(!model||!size||!color||!defect||!selectedSeverity){ showToast("❗ กรุณากรอกข้อมูลให้ครบ","error"); return; }
+
+  const btn=document.getElementById("submit-btn"); const label=document.getElementById("submit-label");
+  btn.disabled=true; label.innerHTML='<span class="spinner"></span> กำลังบันทึก...';
+
+  const th=nowTH();
+  const record={
+    id:`r_${Date.now()}`, datetime:fDT(th), date:fDate(th), time:fTime(th), timezone:"UTC+7",
+    model, size, color, defect, severity:selectedSeverity, note, by:currentUser,
+    syncStatus:CFG.scriptUrl?"pending":"memory", createdAt:Date.now()
+  };
+
+  // 1. เก็บไว้ใน memory ของหน้าเว็บนี้ แล้ว sync ขึ้น Sheets
+  records.unshift(record);
+  saveRecords();
+
+  // 2. อัพเดท model colors อัตโนมัติ — จำว่ารุ่นนี้เคยใช้สีนี้
+  // เพิ่มเฉพาะตัวใหม่ใน Sheets โดยไม่ลบของเก่า
+  if(model && !( OPTIONS.model||[]).includes(model)){
+    if(!OPTIONS.model) OPTIONS.model=[];
+    OPTIONS.model.push(model);
+    addOptionToSheets("model", model);
+  }
+  if(size && !(OPTIONS.size||[]).includes(size)){
+    if(!OPTIONS.size) OPTIONS.size=[];
+    OPTIONS.size.push(size);
+    addOptionToSheets("size", size);
+  }
+  if(model && color){
+    if(!OPTIONS.modelColors) OPTIONS.modelColors={};
+    if(!OPTIONS.modelColors[model]) OPTIONS.modelColors[model]=[];
+    if(!OPTIONS.modelColors[model].includes(color)){
+      OPTIONS.modelColors[model].push(color);
+      OPTIONS.modelColors[model].sort((a,b)=>a.localeCompare(b,'th'));
+      addOptionToSheets("modelColor", color, model);
+    }
   }
 
-  function showToast(msg, type="success") {
-    const t = document.getElementById("toast"); if(!t) return;
-    t.innerText = msg; t.className = `show ${type}`;
-    clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = ""; }, 3500);
+  renderTable(getFilteredRecords()); updateStats();
+  btn.disabled=false; label.textContent="บันทึกข้อมูล";
+  resetForm();
+  showToast("✅ บันทึกแล้ว"+(CFG.scriptUrl?" — กำลัง sync ขึ้น Sheets...":""),"success");
+
+  // 3. sync background
+  if(CFG.scriptUrl){
+    const badge=document.getElementById("sync-badge");
+    badge.className="sync-badge syncing";
+    document.getElementById("sync-dot").className="sync-dot pulse";
+    document.getElementById("sync-text").textContent="กำลัง sync...";
+    await syncRecord(record);
   }
+  updateSyncBadge();
+}
+
+// ════════════════════════════════════════
+//  DELETE
+// ════════════════════════════════════════
+function openConfirmDelete(id){
+  pendingDeleteId=id;
+  const r=records.find(x=>x.id===id);
+  if(!r) return;
+  document.getElementById("confirm-detail").textContent=`${r.model} | ${r.size} | ${r.color} | ${r.defect} | ${r.date} ${r.time}`;
+  document.getElementById("confirm-ok-btn").onclick=()=>doDelete(id);
+  document.getElementById("confirm-modal").classList.add("open");
+}
+function closeConfirm(){ document.getElementById("confirm-modal").classList.remove("open"); pendingDeleteId=null; }
+
+async function doDelete(id){
+  closeConfirm();
+  const idx=records.findIndex(r=>r.id===id);
+  if(idx===-1) return;
+  const deleted=records.splice(idx,1)[0];
+  saveRecords();
+  renderTable(getFilteredRecords()); updateStats(); updateSyncBadge();
+  showToast("🗑️ ลบรายการแล้ว","success");
+  // sync delete ขึ้น Sheets
+  if(CFG.scriptUrl) syncDelete(id);
+}
+
+// ════════════════════════════════════════
+//  EDIT
+// ════════════════════════════════════════
+function openEdit(id){
+  const r=records.find(x=>x.id===id);
+  if(!r) return;
+  editingId=id;
+  editingSeverity=r.severity;
+
+  document.getElementById("edit-modal-sub").textContent=`แก้ไขรายการ #${r.id} — บันทึกเมื่อ ${r.date} ${r.time}`;
+
+  // fill model select
+  const mSel=document.getElementById("edit-model");
+  mSel.innerHTML=`<option value="">— เลือกรุ่น —</option>`;
+  (OPTIONS.model||[]).forEach(m=>{ const o=document.createElement("option"); o.value=m; o.textContent=m; if(m===r.model) o.selected=true; mSel.appendChild(o); });
+
+  // fill size select
+  const sSel=document.getElementById("edit-size");
+  sSel.innerHTML=`<option value="">— เลือก Size —</option>`;
+  (OPTIONS.size||[]).forEach(s=>{ const o=document.createElement("option"); o.value=s; o.textContent=s; if(s===r.size) o.selected=true; sSel.appendChild(o); });
+
+  // fill color select (ตามรุ่น)
+  const colors=getColorsForModel(r.model);
+  const cSel=document.getElementById("edit-color");
+  cSel.innerHTML=`<option value="">— เลือกสี —</option>`;
+  colors.forEach(c=>{ const o=document.createElement("option"); o.value=c; o.textContent=c; if(c===r.color) o.selected=true; cSel.appendChild(o); });
+  // ถ้าสีของ record ไม่อยู่ใน list → เพิ่มให้
+  if(r.color && !colors.includes(r.color)){ const o=document.createElement("option"); o.value=r.color; o.textContent=r.color+" (เดิม)"; o.selected=true; cSel.appendChild(o); }
+
+  // fill defect select
+  const dSel=document.getElementById("edit-defect");
+  dSel.innerHTML=`<option value="">— เลือกตำหนิ —</option>`;
+  (OPTIONS.defect||[]).forEach(d=>{ const o=document.createElement("option"); o.value=d; o.textContent=d; if(d===r.defect) o.selected=true; dSel.appendChild(o); });
+
+  // severity pills
+  document.querySelectorAll(".edit-sev-pill").forEach(p=>{ p.classList.toggle("active",p.dataset.val===r.severity); });
+
+  document.getElementById("edit-note").value=r.note||"";
+  document.getElementById("edit-modal").classList.add("open");
+}
+
+function selectEditSev(el){ document.querySelectorAll(".edit-sev-pill").forEach(p=>p.classList.remove("active")); el.classList.add("active"); editingSeverity=el.dataset.val; }
+function closeEdit(){ document.getElementById("edit-modal").classList.remove("open"); editingId=null; }
+
+async function saveEdit(){
+  const model=document.getElementById("edit-model").value;
+  const size=document.getElementById("edit-size").value;
+  const color=document.getElementById("edit-color").value;
+  const defect=document.getElementById("edit-defect").value;
+  const note=document.getElementById("edit-note").value.trim();
+  if(!model||!size||!color||!defect||!editingSeverity){ showToast("❗ กรุณากรอกข้อมูลให้ครบ","error"); return; }
+
+  const r=records.find(x=>x.id===editingId);
+  if(!r){ closeEdit(); return; }
+
+  // อัพเดท fields
+  r.model=model; r.size=size; r.color=color; r.defect=defect;
+  r.severity=editingSeverity; r.note=note;
+  r.updatedAt=Date.now();
+  r.updatedBy=currentUser;
+  if(CFG.scriptUrl) r.syncStatus="pending";
+
+  // จำสีของรุ่นนี้ + sync ขึ้น Sheets
+  if(model&&color){
+    if(!OPTIONS.modelColors) OPTIONS.modelColors={};
+    if(!OPTIONS.modelColors[model]) OPTIONS.modelColors[model]=[];
+    if(!OPTIONS.modelColors[model].includes(color)){
+      OPTIONS.modelColors[model].push(color);
+      OPTIONS.modelColors[model].sort((a,b)=>a.localeCompare(b,'th'));
+      addOptionToSheets("modelColor", color, model);
+    }
+  }
+
+  saveRecords();
+  renderTable(getFilteredRecords()); updateStats();
+  closeEdit();
+  showToast("✅ แก้ไขเรียบร้อย"+(CFG.scriptUrl?" — กำลัง sync ขึ้น Sheets...":""),"success");
+
+  if(CFG.scriptUrl){
+    const badge=document.getElementById("sync-badge");
+    badge.className="sync-badge syncing";
+    document.getElementById("sync-dot").className="sync-dot pulse";
+    document.getElementById("sync-text").textContent="กำลัง sync...";
+    await syncUpdate(r);
+  }
+  updateSyncBadge();
+}
+
+// ════════════════════════════════════════
+//  FILTER & TABLE
+// ════════════════════════════════════════
+function getFilteredRecords(){
+  const fm=document.getElementById("filter-model").value;
+  const fs=document.getElementById("filter-size").value;
+  const fv=document.getElementById("filter-severity").value;
+  const fd=document.getElementById("filter-defect").value;
+  const from=document.getElementById("filter-date-from").value;
+  const to=document.getElementById("filter-date-to").value;
+  return records.filter(r=>{
+    const d=r.date||splitDT(r.datetime).date;
+    if(fm&&r.model!==fm) return false;
+    if(fs&&r.size!==fs)  return false;
+    if(fv&&r.severity!==fv) return false;
+    if(fd&&r.defect!==fd)   return false;
+    if(from&&d<from) return false;
+    if(to&&d>to)     return false;
+    return true;
+  });
+}
+function applyFilter(){ renderTable(getFilteredRecords()); }
+function clearDateFilter(){ document.getElementById("filter-date-from").value=""; document.getElementById("filter-date-to").value=""; applyFilter(); }
+
+function renderTable(data){
+  const body=document.getElementById("records-body");
+  document.getElementById("table-count").textContent=`${data.length} รายการ`;
+  if(!data.length){ body.innerHTML=`<tr><td colspan="12"><div class="empty-state"><div class="icon">📋</div><p>ไม่พบรายการ</p></div></td></tr>`; return; }
+  body.innerHTML=data.map((r,i)=>{
+    const sc=r.severity==="มาก"?"sev-chip-high":r.severity==="ปานกลาง"?"sev-chip-mid":"sev-chip-low";
+    const em=r.severity==="มาก"?"🔴":r.severity==="ปานกลาง"?"🟡":"🟢";
+    const d=r.date||splitDT(r.datetime).date;
+    const t=r.time||splitDT(r.datetime).time;
+    const ss=r.syncStatus||"memory";
+    const syncTip=ss==="synced"?"Synced ✓":ss==="pending"?"รอ sync":ss==="fail"?"Sync ไม่สำเร็จ":"In memory";
+    return `<tr>
+      <td style="text-align:center"><span class="row-sync ${ss}" title="${syncTip}"></span></td>
+      <td style="font-size:12px;color:var(--text-muted);font-weight:600">${data.length-i}</td>
+      <td style="font-size:12px;font-weight:700;white-space:nowrap">${d}</td>
+      <td style="font-size:12px;color:var(--text-muted);white-space:nowrap">${t}</td>
+      <td><span class="chip chip-purple">${r.model}</span></td>
+      <td><span class="chip chip-gray">${r.size}</span></td>
+      <td style="font-weight:600">${r.color}</td>
+      <td><div class="defect-type">${r.defect}</div>${r.note?`<div class="defect-note">${r.note}</div>`:""}</td>
+      <td><span class="sev-chip ${sc}">${em} ${r.severity}</span></td>
+      <td class="text-muted" style="font-size:12px">${r.note||"—"}</td>
+      <td class="text-muted" style="font-size:12px;font-weight:600">${r.by}</td>
+      <td>
+        <div class="row-actions">
+          <button class="btn-edit" onclick="openEdit('${r.id}')" title="แก้ไข">✏️</button>
+          <button class="btn-del"  onclick="openConfirmDelete('${r.id}')" title="ลบ">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+}
+
+function updateStats(){
+  const today=fDate(nowTH());
+  document.getElementById("stat-today").textContent=records.filter(r=>(r.date||splitDT(r.datetime).date)===today).length;
+  document.getElementById("stat-high").textContent=records.filter(r=>r.severity==="มาก").length;
+  document.getElementById("stat-mid").textContent=records.filter(r=>r.severity==="ปานกลาง").length;
+  document.getElementById("stat-total").textContent=records.length;
+}
+
+// ════════════════════════════════════════
+//  EXPORT CSV
+// ════════════════════════════════════════
+function exportCSV(){
+  const data=getFilteredRecords();
+  if(!data.length){ showToast("⚠️ ไม่มีข้อมูล","error"); return; }
+  const headers=["#","วันที่ (UTC+7)","เวลา","ชื่อรุ่น","Size","Color","ประเภทตำหนิ","ระดับ","หมายเหตุ","บันทึกโดย","แก้ไขโดย","Sync Status"];
+  const rows=data.map((r,i)=>{
+    const d=r.date||splitDT(r.datetime).date;
+    const t=r.time||splitDT(r.datetime).time;
+    return [data.length-i,d,t,r.model,r.size,r.color,r.defect,r.severity,r.note||"",r.by,r.updatedBy||"",r.syncStatus||"memory"].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",");
+  });
+  const from=document.getElementById("filter-date-from").value;
+  const to=document.getElementById("filter-date-to").value;
+  let fn="defect-report";
+  if(from&&to) fn+=`_${from}_to_${to}`;
+  else fn+=`_${fDate(nowTH())}`;
+  fn+=".csv";
+  const blob=new Blob(["\uFEFF"+[headers.map(h=>`"${h}"`).join(","),...rows].join("\r\n")],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download=fn;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`✅ Export ${data.length} รายการ`,"success");
+}
+
+// ════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════
+let toastTimer;
+function showToast(msg,type=""){
+  const t=document.getElementById("toast"); t.textContent=msg; t.className=`show ${type}`;
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.className="",3500);
+}
+
+// ════════════════════════════════════════
+//  LOAD OPTIONS FROM SHEETS
+// ════════════════════════════════════════
+async function loadOptionsFromSheet(showStatus=false){
+  if(!CFG.scriptUrl) return;
+  const statusEl = document.getElementById("options-status");
+  if(statusEl) statusEl.textContent = "กำลังโหลด...";
+  try{
+    const res  = await fetch(`${CFG.scriptUrl}?action=getOptions`);
+    const data = await res.json();
+    if(data.success && data.options){
+      const o = data.options;
+      if(o.model  && o.model.length)  OPTIONS.model  = o.model;
+      if(o.size   && o.size.length)   OPTIONS.size   = o.size;
+      if(o.color  && o.color.length)  OPTIONS.color  = o.color;
+      if(o.defect && o.defect.length) OPTIONS.defect = o.defect;
+      if(o.modelColors) OPTIONS.modelColors = o.modelColors;
+      OPTIONS.colors = OPTIONS.color; // alias
+      rebuildDropdowns();
+      if(statusEl) statusEl.textContent = "✅ โหลดแล้ว " + new Date().toLocaleTimeString('th-TH');
+      if(showStatus) showToast("✅ โหลด Dropdown จาก Sheets แล้ว","success");
+    }
+  }catch(e){
+    if(statusEl) statusEl.textContent = "⚠️ โหลดไม่ได้";
+    if(showStatus) showToast("⚠️ โหลด Options ไม่ได้ — ใช้ข้อมูลเดิม","error");
+  }
+}
+
+async function reloadOptions(){
+  await loadOptionsFromSheet(true);
+}
+
+init();
 </script>
 </body>
 </html>
