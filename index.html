@@ -510,8 +510,20 @@ function loadAll(){
   try{ records=JSON.parse(localStorage.getItem(LS.RECORDS))||[]; }catch(e){ records=[]; }
 }
 function saveCFG(){ localStorage.setItem(LS.CONFIG,JSON.stringify(CFG)); }
-function saveOptions(){ localStorage.setItem(LS.OPTIONS,JSON.stringify(OPTIONS)); }
 function saveRecords(){ localStorage.setItem(LS.RECORDS,JSON.stringify(records)); }
+
+// บันทึก Options ขึ้น Google Sheets (ทุกคนเห็นเหมือนกัน)
+async function saveOptions(){
+  if(!CFG.scriptUrl) return false;
+  try{
+    const res = await fetch(CFG.scriptUrl,{
+      method:"POST",
+      body: JSON.stringify({ action:"saveOptions", options: OPTIONS })
+    });
+    const data = await res.json();
+    return data.success;
+  }catch(e){ return false; }
+}
 
 // ════════════════════════════════════════
 //  UTC+7
@@ -626,7 +638,7 @@ async function saveSetup(){
 
   if(CFG.scriptUrl){
     showToast("💾 กำลัง sync Options ขึ้น Sheets...","");
-    const ok = await saveOptionsToSheets();
+    const ok = await saveOptions();
     if(ok) showToast("✅ sync Options สำเร็จ — ทุกคนจะเห็นทันทีตอน login ใหม่","success");
     else   showToast("⚠️ บันทึกแล้ว แต่ sync Sheets ไม่สำเร็จ","error");
   } else {
@@ -757,7 +769,7 @@ function comboAddNew(field,value){
   document.getElementById(`combo-${field}`).classList.remove("open");
   if(field==="model") onModelChange();
   showToast(`✨ เพิ่ม "${value}" แล้ว — กำลัง sync...`,"success");
-  saveOptionsToSheets().then(ok=>{
+  saveOptions().then(ok=>{
     if(ok) showToast(`✅ "${value}" sync ขึ้น Sheets แล้ว`,"success");
   });
 }
@@ -913,7 +925,7 @@ async function submitRecord(){
       optChanged = true;
     }
   });
-  if(optChanged) saveOptionsToSheets();
+  if(optChanged) saveOptions();
 
   renderTable(getFilteredRecords()); updateStats();
   btn.disabled=false; label.textContent="บันทึกข้อมูล";
@@ -1025,7 +1037,7 @@ async function saveEdit(){
     if(!OPTIONS.modelColors[model].includes(color)){
       OPTIONS.modelColors[model].push(color);
       OPTIONS.modelColors[model].sort((a,b)=>a.localeCompare(b,'th'));
-      saveOptionsToSheets();
+      saveOptions();
     }
   }
 
