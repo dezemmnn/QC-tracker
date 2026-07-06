@@ -43,6 +43,7 @@
   .field-group input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(168,85,247,.12);}
   .btn-primary{width:100%;padding:12px;background:linear-gradient(135deg,#A855F7,#EC4899);color:white;border:none;border-radius:var(--radius-sm);font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:8px;box-shadow:0 4px 16px rgba(168,85,247,.3);}
   .btn-primary:hover{opacity:.9;}.btn-primary:active{transform:scale(.98);}
+  .btn-primary:disabled{opacity:.6;cursor:default;}
   .login-error{background:#FFF0F0;border:1.5px solid #FECACA;color:#B91C1C;padding:10px 14px;border-radius:var(--radius-xs);font-size:13px;margin-top:12px;display:none;}
 
   /* MODAL */
@@ -55,33 +56,29 @@
   .modal-section-title{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
   .modal input[type=text],.modal input[type=password],.modal textarea{width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-xs);font-family:inherit;font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s;}
   .modal input:focus,.modal textarea:focus{border-color:var(--accent);}
-  .modal textarea{resize:vertical;min-height:80px;font-size:12px;}
   .modal-hint{font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5;}
   .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1.5px dashed var(--border);}
   .btn-modal-cancel{padding:9px 20px;border:2px solid var(--border);background:transparent;border-radius:var(--radius-xs);font-family:inherit;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .15s;}
   .btn-modal-cancel:hover{border-color:var(--border-strong);color:var(--text);}
   .btn-modal-save{padding:9px 20px;background:linear-gradient(135deg,#A855F7,#EC4899);color:white;border:none;border-radius:var(--radius-xs);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(168,85,247,.3);}
 
-  /* CONFIRM MODAL */
+  /* EDIT/CONFIRM */
+  .edit-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .edit-form-grid .full{grid-column:1/-1;}
+  .edit-field label{display:block;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+  .edit-field select,.edit-field input,.edit-field textarea{width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-xs);font-family:inherit;font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none;}
+  .edit-field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B6FAD' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px;cursor:pointer;}
+  .edit-sev-pills{display:flex;gap:8px;}
+  .edit-sev-pill{flex:1;padding:8px 4px;border:2px solid var(--border);border-radius:var(--radius-xs);text-align:center;cursor:pointer;font-size:12px;font-weight:700;transition:all .15s;user-select:none;background:var(--surface2);}
+  .edit-sev-pill[data-val="น้อย"].active{background:var(--sev-low-bg);border-color:#6EE7B7;color:var(--sev-low-text);}
+  .edit-sev-pill[data-val="ปานกลาง"].active{background:var(--sev-mid-bg);border-color:#FCD34D;color:var(--sev-mid-text);}
+  .edit-sev-pill[data-val="มาก"].active{background:var(--sev-high-bg);border-color:#FCA5A5;color:var(--sev-high-text);}
   .confirm-modal{max-width:380px;}
   .confirm-icon{font-size:36px;text-align:center;margin-bottom:12px;}
   .confirm-title{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;text-align:center;margin-bottom:6px;}
   .confirm-body{font-size:13px;color:var(--text-muted);text-align:center;margin-bottom:4px;}
   .confirm-detail{font-size:12px;color:var(--text-light);text-align:center;background:var(--surface2);border-radius:8px;padding:8px 12px;margin-top:10px;}
   .btn-danger{padding:10px 22px;background:linear-gradient(135deg,#EF4444,#DC2626);color:white;border:none;border-radius:var(--radius-xs);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(239,68,68,.3);}
-
-  /* EDIT MODAL */
-  .edit-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  .edit-form-grid .full{grid-column:1/-1;}
-  .edit-field label{display:block;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
-  .edit-field select,.edit-field input,.edit-field textarea{width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-xs);font-family:inherit;font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none;}
-  .edit-field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B6FAD' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px;cursor:pointer;}
-  .edit-field select:focus,.edit-field input:focus,.edit-field textarea:focus{border-color:var(--accent);}
-  .edit-sev-pills{display:flex;gap:8px;}
-  .edit-sev-pill{flex:1;padding:8px 4px;border:2px solid var(--border);border-radius:var(--radius-xs);text-align:center;cursor:pointer;font-size:12px;font-weight:700;transition:all .15s;user-select:none;background:var(--surface2);}
-  .edit-sev-pill[data-val="น้อย"].active{background:var(--sev-low-bg);border-color:#6EE7B7;color:var(--sev-low-text);}
-  .edit-sev-pill[data-val="ปานกลาง"].active{background:var(--sev-mid-bg);border-color:#FCD34D;color:var(--sev-mid-text);}
-  .edit-sev-pill[data-val="มาก"].active{background:var(--sev-high-bg);border-color:#FCA5A5;color:var(--sev-high-text);}
 
   /* APP */
   #app{display:none;min-height:100vh;}
@@ -95,11 +92,10 @@
   .btn-topbar{padding:5px 12px;border:1.5px solid var(--border);background:transparent;border-radius:var(--radius-xs);font-family:inherit;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;}
   .btn-topbar:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
   .btn-logout:hover{border-color:#FCA5A5;color:#DC2626;background:#FFF5F5;}
-  .sync-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;border:1.5px solid;transition:all .3s;}
+  .sync-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;border:1.5px solid;}
   .sync-badge.ok{background:#D6F5EC;border-color:#6EE7B7;color:#065F46;}
   .sync-badge.syncing{background:#EDE0FF;border-color:#C4B5FD;color:#6D28D9;}
   .sync-badge.error{background:#FFE0E0;border-color:#FCA5A5;color:#991B1B;}
-  .sync-badge.offline{background:#F3F0FF;border-color:var(--border);color:var(--text-muted);}
   .sync-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
   .sync-dot.pulse{animation:pulse 1.2s infinite;}
 
@@ -128,27 +124,20 @@
   .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
   .form-grid .full{grid-column:1/-1;}
   .field label{display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
-
-  /* FIELD DROPDOWN */
   .field select{width:100%;padding:10px 36px 10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--surface2);outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B6FAD' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:border-color .15s;}
   .field select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(168,85,247,.10);}
   .field select:disabled{opacity:.6;cursor:not-allowed;background-color:#F5F5F5;}
   .field textarea{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--surface2);outline:none;resize:vertical;min-height:80px;transition:border-color .15s;}
   .field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(168,85,247,.10);}
   .color-hint{font-size:11px;color:var(--text-muted);margin-top:4px;}
-
   .severity-pills{display:flex;gap:10px;}
   .severity-pill{flex:1;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);text-align:center;cursor:pointer;font-size:13px;font-weight:700;transition:all .18s;user-select:none;background:var(--surface2);}
-  .severity-pill[data-val="น้อย"]:hover,.severity-pill[data-val="น้อย"].active{background:var(--sev-low-bg);border-color:#6EE7B7;color:var(--sev-low-text);transform:translateY(-1px);}
-  .severity-pill[data-val="ปานกลาง"]:hover,.severity-pill[data-val="ปานกลาง"].active{background:var(--sev-mid-bg);border-color:#FCD34D;color:var(--sev-mid-text);transform:translateY(-1px);}
-  .severity-pill[data-val="มาก"]:hover,.severity-pill[data-val="มาก"].active{background:var(--sev-high-bg);border-color:#FCA5A5;color:var(--sev-high-text);transform:translateY(-1px);}
-
+  .severity-pill[data-val="น้อย"].active{background:var(--sev-low-bg);border-color:#6EE7B7;color:var(--sev-low-text);}
+  .severity-pill[data-val="ปานกลาง"].active{background:var(--sev-mid-bg);border-color:#FCD34D;color:var(--sev-mid-text);}
+  .severity-pill[data-val="มาก"].active{background:var(--sev-high-bg);border-color:#FCA5A5;color:var(--sev-high-text);}
   .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1.5px dashed var(--border);}
   .btn-secondary{padding:10px 22px;border:2px solid var(--border);background:var(--surface);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .15s;}
-  .btn-secondary:hover{border-color:var(--border-strong);color:var(--text);}
   .btn-submit{padding:10px 26px;background:linear-gradient(135deg,#A855F7,#EC4899);color:white;border:none;border-radius:var(--radius-sm);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(168,85,247,.28);}
-  .btn-submit:hover{opacity:.9;transform:translateY(-1px);}
-  .btn-submit:disabled{opacity:.6;cursor:default;transform:none;}
 
   /* TABLE */
   .table-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;}
@@ -158,33 +147,21 @@
   .filter-bar{display:flex;gap:8px;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--surface2);flex-wrap:wrap;align-items:center;}
   .filter-bar select,.filter-bar input[type=date]{padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-family:inherit;font-size:12px;font-weight:600;color:var(--text);background:var(--surface);outline:none;cursor:pointer;}
   .filter-bar select{padding-right:28px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238B6FAD' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;}
-  .filter-bar select:focus,.filter-bar input[type=date]:focus{border-color:var(--accent);}
-  .filter-sep{width:1px;height:22px;background:var(--border);flex-shrink:0;}
-  .filter-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;white-space:nowrap;}
-  .btn-export{padding:6px 14px;background:linear-gradient(135deg,#A855F7,#EC4899);color:white;border:none;border-radius:var(--radius-xs);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;box-shadow:0 2px 8px rgba(168,85,247,.25);}
-  .btn-export:hover{opacity:.88;transform:translateY(-1px);}
+  .btn-export{padding:6px 14px;background:linear-gradient(135deg,#A855F7,#EC4899);color:white;border:none;border-radius:var(--radius-xs);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(168,85,247,.25);}
   .pending-banner{background:#FFF3CD;border:1.5px solid #FCD34D;border-radius:var(--radius-sm);padding:10px 16px;margin-bottom:16px;display:none;align-items:center;gap:10px;font-size:13px;font-weight:600;color:#92400E;}
-  .pending-banner.show{display:flex;}
   .btn-retry{padding:5px 14px;background:#F59E0B;color:white;border:none;border-radius:var(--radius-xs);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-left:auto;}
-
   .table-wrap{overflow-x:auto;}
   table{width:100%;border-collapse:collapse;}
-  thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;border-bottom:1.5px solid var(--border);white-space:nowrap;background:var(--surface2);}
-  tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
-  tbody tr:last-child{border-bottom:none;}
+  thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;border-bottom:1.5px solid var(--border);background:var(--surface2);}
+  tbody tr{border-bottom:1px solid var(--border);}
   tbody tr:hover{background:var(--surface2);}
   tbody td{padding:10px 14px;font-size:13px;vertical-align:middle;}
-
-  /* ACTION BUTTONS in table */
   .row-actions{display:flex;gap:5px;align-items:center;}
-  .btn-edit,.btn-del{width:28px;height:28px;border-radius:7px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;}
+  .btn-edit,.btn-del{width:28px;height:28px;border-radius:7px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;}
   .btn-edit{background:var(--accent-light);color:var(--accent);}
-  .btn-edit:hover{background:#E9D5FF;transform:scale(1.1);}
   .btn-del{background:#FFE0E0;color:#991B1B;}
-  .btn-del:hover{background:#FECACA;transform:scale(1.1);}
-
   .row-sync{width:6px;height:6px;border-radius:50%;display:inline-block;}
-  .row-sync.synced{background:#10B981;}.row-sync.pending{background:#F59E0B;animation:pulse 1s infinite;}.row-sync.fail{background:#EF4444;}.row-sync.local{background:#C4B5FD;}
+  .row-sync.synced{background:#10B981;}.row-sync.pending{background:#F59E0B;animation:pulse 1s infinite;}.row-sync.fail{background:#EF4444;}
   .sev-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
   .sev-chip-low{background:var(--sev-low-bg);color:var(--sev-low-text);}
   .sev-chip-mid{background:var(--sev-mid-bg);color:var(--sev-mid-text);}
@@ -193,21 +170,17 @@
   .chip-purple{background:var(--accent-light);color:var(--accent);}
   .chip-gray{background:#F3F0FF;color:var(--text-muted);border:1px solid var(--border);}
   .text-muted{color:var(--text-muted);}
-  td .defect-type{font-weight:600;}
-  td .defect-note{font-size:11px;color:var(--text-muted);margin-top:1px;}
   .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted);}
-  .empty-state .icon{font-size:44px;margin-bottom:12px;}
-  .empty-state p{font-size:14px;font-weight:600;}
+  .empty-state .icon{font-size:44px;}
 
   /* TOAST */
-  #toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:white;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(45,27,78,.2);transform:translateY(80px);opacity:0;transition:all .28s cubic-bezier(.175,.885,.32,1.1);z-index:999;max-width:340px;}
+  #toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:white;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(45,27,78,.2);transform:translateY(80px);opacity:0;transition:all .28s;z-index:999;}
   #toast.show{transform:translateY(0);opacity:1;}
   #toast.success{background:linear-gradient(135deg,#059669,#10B981);}
   #toast.error{background:linear-gradient(135deg,#DC2626,#EF4444);}
-  .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
+  #toast.warning{background:linear-gradient(135deg,#D97706,#F59E0B);}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-  @media(max-width:768px){.stats-row{grid-template-columns:repeat(2,1fr);}.form-grid{grid-template-columns:1fr;}.form-grid .full{grid-column:1;}.main{padding:16px;}.login-card{padding:36px 24px;margin:16px;}.topbar-right .sync-badge{display:none;}}
+  @media(max-width:768px){.stats-row{grid-template-columns:repeat(2,1fr);}.form-grid{grid-template-columns:1fr;}.main{padding:16px;}.login-card{padding:36px 24px;}}
 </style>
 </head>
 <body>
@@ -219,10 +192,10 @@
       <div><h1>QC Defect Tracker</h1><p>ระบบบันทึกตำหนิสินค้า</p></div>
     </div>
     <h2 class="login-title">เข้าสู่ระบบ</h2>
-    <p class="login-sub">กรุณากรอก Username และ Password</p>
+    <p class="login-sub">ตรวจสอบข้อมูลสิทธิ์การเข้าใช้งานจาก Google Sheets 100%</p>
     <div class="field-group"><label>Username</label><input type="text" id="login-user" placeholder="กรอก username" autocomplete="username"></div>
     <div class="field-group"><label>Password</label><input type="password" id="login-pass" placeholder="กรอก password" autocomplete="current-password"></div>
-    <button class="btn-primary" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <button class="btn-primary" id="login-btn" onclick="doLogin()">เข้าสู่ระบบ</button>
     <div class="login-error" id="login-error">❌ Username หรือ Password ไม่ถูกต้อง</div>
   </div>
 </div>
@@ -230,26 +203,15 @@
 <div class="modal-overlay" id="setup-modal">
   <div class="modal">
     <div class="modal-title">⚙️ ตั้งค่าระบบ</div>
-    <div class="modal-sub" id="setup-modal-sub">แก้ไขได้ทุกเมื่อ — บันทึกจะมีผลทันที</div>
-
-    <div id="admin-only-section">
-      <div class="modal-section">
-        <div class="modal-section-title">🔗 Google Sheets Script URL</div>
-        <input type="text" id="cfg-url" placeholder="https://script.google.com/macros/s/.../exec">
-        <div class="modal-hint">URL ที่ฝังใน HTML จะถูกใช้เสมอ — ช่องนี้ไว้ดู/ทดสอบเท่านั้น</div>
-      </div>
-      <div class="modal-section">
-        <div class="modal-section-title">👤 Users (Fallback เมื่อ Sheets ไม่ตอบ)</div>
-        <div class="modal-hint">จัดการ user หลักได้ที่ Google Sheets แท็บ <strong>Users</strong> โดยตรง</div>
-        <textarea id="cfg-users" placeholder="admin:admin1234&#10;user1:pass1111" style="margin-top:8px"></textarea>
-      </div>
-    </div>
-
+    <div class="modal-sub">แก้ไข URL สำหรับติดต่อกับ Google Sheets Backend</div>
     <div class="modal-section">
-      <div class="modal-section-title">📋 ข้อมูล Dropdown</div>
-      <div class="modal-hint">ชื่อรุ่น, Size, Color, ประเภทตำหนิ — จัดการได้ที่ Google Sheets แท็บ <strong>Options</strong><br>แก้ใน Sheet แล้วกดปุ่มด้านล่างเพื่อโหลดข้อมูลใหม่</div>
-      <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <button class="btn-modal-save" onclick="reloadOptions()" style="background:linear-gradient(135deg,#059669,#10B981)">🔄 โหลดข้อมูลจาก Sheets</button>
+      <div class="modal-section-title">🔗 Google Sheets Script URL</div>
+      <input type="text" id="cfg-url" style="width:100%" placeholder="https://script.google.com/macros/s/.../exec">
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">📋 ข้อมูลตัวเลือกฟอร์ม</div>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:10px">
+        <button class="btn-modal-save" onclick="reloadOptions()" style="background:linear-gradient(135deg,#059669,#10B981)">🔄 โหลดข้อมูลตัวเลือกใหม่</button>
         <span id="options-status" style="font-size:12px;color:var(--text-muted)"></span>
       </div>
     </div>
@@ -278,22 +240,10 @@
     <div class="modal-title">✏️ แก้ไขรายการ</div>
     <div class="modal-sub" id="edit-modal-sub"></div>
     <div class="edit-form-grid">
-      <div class="edit-field">
-        <label>ชื่อรุ่น *</label>
-        <select id="edit-model" onchange="onEditModelChange()"></select>
-      </div>
-      <div class="edit-field">
-        <label>Size *</label>
-        <select id="edit-size"></select>
-      </div>
-      <div class="edit-field">
-        <label>Color *</label>
-        <select id="edit-color"></select>
-      </div>
-      <div class="edit-field">
-        <label>ประเภทตำหนิ *</label>
-        <select id="edit-defect"></select>
-      </div>
+      <div class="edit-field"><label>ชื่อรุ่น *</label><select id="edit-model" onchange="onEditModelChange()"></select></div>
+      <div class="edit-field"><label>Size *</label><select id="edit-size"></select></div>
+      <div class="edit-field"><label>Color *</label><select id="edit-color"></select></div>
+      <div class="edit-field"><label>ประเภทตำหนิ *</label><select id="edit-defect"></select></div>
       <div class="edit-field full">
         <label>ระดับความรุนแรง *</label>
         <div class="edit-sev-pills">
@@ -302,10 +252,7 @@
           <div class="edit-sev-pill" data-val="มาก"      onclick="selectEditSev(this)">🔴 มาก</div>
         </div>
       </div>
-      <div class="edit-field full">
-        <label>หมายเหตุ</label>
-        <textarea id="edit-note" rows="2"></textarea>
-      </div>
+      <div class="edit-field full"><label>หมายเหตุ</label><textarea id="edit-note" rows="2"></textarea></div>
     </div>
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="closeEdit()">ยกเลิก</button>
@@ -321,7 +268,7 @@
       <span class="topbar-title">QC Defect Tracker</span>
     </div>
     <div class="topbar-right">
-      <div class="sync-badge offline" id="sync-badge"><div class="sync-dot" id="sync-dot"></div><span id="sync-text">Local only</span></div>
+      <div class="sync-badge ok" id="sync-badge"><div class="sync-dot" id="sync-dot"></div><span id="sync-text">Sheets Connected</span></div>
       <button class="btn-topbar" onclick="openSetup()">⚙️ ตั้งค่า</button>
       <div class="user-badge"><div class="user-avatar" id="user-avatar"></div><span id="user-display"></span></div>
       <button class="btn-topbar btn-logout" onclick="doLogout()">ออกจากระบบ</button>
@@ -330,10 +277,10 @@
 
   <div class="main">
     <div class="page-title">บันทึกตำหนิสินค้า</div>
-    <div class="page-sub">เวลาทั้งหมดใช้ UTC+7 — บันทึกข้อมูลและตรวจเช็กจาก Google Sheets ทั้งหมด</div>
+    <div class="page-sub">เวลาและฐานข้อมูลอ้างอิงตรงกับ Google Sheets ระบบคลาวด์</div>
 
     <div class="pending-banner" id="pending-banner">
-      ⏳ มี <span id="pending-count">0</span> รายการรอ sync
+      ⏳ มี <span id="pending-count">0</span> รายการรอ sync ปลายทาง
       <button class="btn-retry" onclick="retrySync()">🔄 Sync ตอนนี้</button>
     </div>
 
@@ -350,29 +297,10 @@
         <div class="form-card-title">บันทึกตำหนิใหม่</div>
       </div>
       <div class="form-grid">
-        <div class="field">
-          <label>ชื่อรุ่น / Model *</label>
-          <select id="f-model" onchange="handleModelChange()">
-            <option value="">— เลือกชื่อรุ่น —</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Size *</label>
-          <select id="f-size">
-            <option value="">— เลือก Size —</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Color *</label>
-          <select id="f-color" disabled>
-            <option value="">— เลือกรุ่นก่อน —</option>
-          </select>
-          <div class="color-hint" id="color-hint"></div>
-        </div>
-        <div class="field">
-          <label>ประเภทตำหนิ *</label>
-          <select id="f-defect"><option value="">— เลือกประเภทตำหนิ —</option></select>
-        </div>
+        <div class="field"><label>ชื่อรุ่น / Model *</label><select id="f-model" onchange="handleModelChange()"><option value="">— เลือกชื่อรุ่น —</option></select></div>
+        <div class="field"><label>Size *</label><select id="f-size"><option value="">— เลือก Size —</option></select></div>
+        <div class="field"><label>Color *</label><select id="f-color" disabled><option value="">— เลือกรุ่นก่อน —</option></select><div class="color-hint" id="color-hint"></div></div>
+        <div class="field"><label>ประเภทตำหนิ *</label><select id="f-defect"><option value="">— เลือกประเภทตำหนิ —</option></select></div>
         <div class="field full">
           <label>ระดับความรุนแรง *</label>
           <div class="severity-pills">
@@ -381,10 +309,7 @@
             <div class="severity-pill" data-val="มาก"      onclick="selectSeverity(this)">🔴 มาก</div>
           </div>
         </div>
-        <div class="field full">
-          <label>หมายเหตุ / Notes</label>
-          <textarea id="f-note" placeholder="รายละเอียดเพิ่มเติม (ระบุหรือไม่ก็ได้)..."></textarea>
-        </div>
+        <div class="field full"><label>หมายเหตุ / Notes</label><textarea id="f-note" placeholder="รายละเอียดเพิ่มเติม..."></textarea></div>
       </div>
       <div class="form-actions">
         <button class="btn-secondary" onclick="resetForm()">ล้างฟอร์ม</button>
@@ -409,8 +334,6 @@
           <option value="ปานกลาง">ปานกลาง</option>
           <option value="มาก">มาก</option>
         </select>
-        <div class="filter-sep"></div>
-        <span class="filter-label">วันที่คัดเลือก:</span>
         <input type="date" id="filter-date" onchange="renderTable()">
         <button class="btn-export" onclick="exportToCSV()" style="margin-left:auto">📥 Export CSV</button>
       </div>
@@ -431,14 +354,13 @@
         </table>
       </div>
     </div>
-
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-// URL สำหรับระบบดึงข้อมูล Web App ของ Google Apps Script ตัวหลักของคุณ
+// ใส่ URL ของ Google Apps Script Web App ของคุณตรงนี้
 const EMBED_URL = "https://script.google.com/macros/s/AKfycbyR66K9e6mY_F_fHqGv-iI0X7K8D59Cghr4Z0wI6S7pYhR66F8G9H-Z9v7H_EXAMPLE/exec"; 
 
 const LS = {
@@ -448,7 +370,7 @@ const LS = {
   USER: "qc_defect_current_user_v2"
 };
 
-let CFG = { scriptUrl: EMBED_URL, users: "admin:admin1234\nuser1:pass1111" };
+let CFG = { scriptUrl: EMBED_URL };
 let RECORDS = [];
 let OPTIONS = { model:[], size:[], color:[], defect:[], modelColors:{} };
 let currentUser = null;
@@ -457,7 +379,6 @@ let selectedEditSeverityValue = "";
 let currentEditId = null;
 let toastTimer;
 
-// เริ่มต้นระบบหน้าเว็บ
 window.addEventListener("DOMContentLoaded", () => {
   initData();
   checkLoginStatus();
@@ -466,26 +387,16 @@ window.addEventListener("DOMContentLoaded", () => {
 function initData() {
   const localCfg = localStorage.getItem(LS.CFG);
   if(localCfg) { try{ CFG = JSON.parse(localCfg); if(!CFG.scriptUrl) CFG.scriptUrl=EMBED_URL; }catch(e){} }
-  
   const localRec = localStorage.getItem(LS.RECORDS);
   if(localRec) { try{ RECORDS = JSON.parse(localRec); }catch(e){} }
-  
   const localOpt = localStorage.getItem(LS.OPTIONS);
   if(localOpt) { try{ OPTIONS = JSON.parse(localOpt); }catch(e){} }
-
-  const dStr = new Date().toLocaleDateString('en-CA');
-  const fDate = document.getElementById("filter-date");
-  if(fDate) fDate.value = dStr;
+  document.getElementById("filter-date").value = new Date().toLocaleDateString('en-CA');
 }
 
 function checkLoginStatus() {
   const u = localStorage.getItem(LS.USER);
-  if(u) {
-    currentUser = u;
-    showApp();
-  } else {
-    showLogin();
-  }
+  if(u) { currentUser = u; showApp(); } else { showLogin(); }
 }
 
 function showLogin() {
@@ -498,39 +409,58 @@ function showApp() {
   document.getElementById("app").style.display = "block";
   document.getElementById("user-display").textContent = currentUser;
   document.getElementById("user-avatar").textContent = currentUser.charAt(0).toUpperCase();
-  
   rebuildDropdowns();
   renderTable();
   updateStats();
-  checkSyncStatus();
-  
-  // โหลดออปชันสดใหม่จากชีทเสมอเมื่อเข้าระบบ
   loadOptionsFromSheet(false);
 }
 
+// ════════════════════════════════════════════════════
+//  LOGIN FUNCTION (ยิงถามสคริปต์ Google Sheets 100%)
+// ════════════════════════════════════════════════════
 function doLogin() {
   const u = document.getElementById("login-user").value.trim();
   const p = document.getElementById("login-pass").value.trim();
   const err = document.getElementById("login-error");
+  const btn = document.getElementById("login-btn");
   if(!u || !p) return;
-  
-  let valid = false;
-  const lines = CFG.users.split("\n");
-  for(let l of lines) {
-    const pair = l.trim().split(":");
-    if(pair.length === 2 && pair[0] === u && pair[1] === p) {
-      valid = true; break;
+
+  err.style.display = "none";
+  btn.disabled = true;
+  btn.textContent = "กำลังตรวจสอบสิทธิ์...";
+
+  if(!CFG.scriptUrl || CFG.scriptUrl.includes("EXAMPLE")) {
+    btn.disabled = false;
+    btn.textContent = "เข้าสู่ระบบ";
+    alert("⚠️ กรุณาเปิดโค้ด index.html เพื่อตั้งค่าแก้ไขตัวแปร EMBED_URL ให้เป็นสคริปต์ Web App จริงของคุณก่อนครับ!");
+    return;
+  }
+
+  // ส่ง JSON แบบจู่โจมตรวจสอบตรงผ่าน POST ไปที่ Apps Script ตัวหลัง
+  fetch(CFG.scriptUrl, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" }, // ป้องกันการติดปัญหา CORS preflight ใน Apps Script
+    body: JSON.stringify({ action: "login", username: u, password: p })
+  })
+  .then(res => res.json())
+  .then(data => {
+    btn.disabled = false;
+    btn.textContent = "เข้าสู่ระบบ";
+    if(data && data.success) {
+      localStorage.setItem(LS.USER, u);
+      currentUser = u;
+      showApp();
+    } else {
+      err.style.display = "block";
+      err.textContent = `❌ ${data.error || "Username หรือ Password ไม่ถูกต้อง"}`;
     }
-  }
-  
-  if(valid) {
-    err.style.display = "none";
-    localStorage.setItem(LS.USER, u);
-    currentUser = u;
-    showApp();
-  } else {
+  })
+  .catch(e => {
+    btn.disabled = false;
+    btn.textContent = "เข้าสู่ระบบ";
     err.style.display = "block";
-  }
+    err.textContent = "❌ ไม่สามารถติดต่อคลาวด์ Google Sheets ได้ (โปรดตรวจสอบเน็ต หรือ Deployment URL)";
+  });
 }
 
 function doLogout() {
@@ -540,148 +470,95 @@ function doLogout() {
 }
 
 // ════════════════════════════════════════
-//  DROPDOWN BUILDER (ดึงตามที่มีในชีทล้วนๆ)
+//  DROPDOWN & MODEL COLORS BINDING
 // ════════════════════════════════════════
 function rebuildDropdowns() {
-  // บิลด์ในฟอร์มบันทึกหลัก
   buildSelect("f-model", OPTIONS.model || [], "— เลือกชื่อรุ่น —");
   buildSelect("f-size", OPTIONS.size || [], "— เลือก Size —");
   buildSelect("f-defect", OPTIONS.defect || [], "— เลือกประเภทตำหนิ —");
-
-  // บิลด์ในกล่องกรองของตาราง
   buildSelect("filter-model", OPTIONS.model || [], "ทุกรุ่น");
-  
-  // บิลด์รายชื่อคนกรอง
   const usersSet = new Set();
   RECORDS.forEach(r => { if(r.user) usersSet.add(r.user); });
   buildSelect("filter-user", Array.from(usersSet), "ทุกคน");
-  
-  // ล้างกล่องสีและปิดการใช้งานไว้รอการเลือกรุ่น
-  const cSel = document.getElementById("f-color");
-  if(cSel) {
-    cSel.innerHTML = '<option value="">— เลือกรุ่นก่อน —</option>';
-    cSel.disabled = true;
-  }
+  document.getElementById("f-color").innerHTML = '<option value="">— เลือกรุ่นก่อน —</option>';
+  document.getElementById("f-color").disabled = true;
 }
 
 function buildSelect(id, list, placeholder) {
-  const el = document.getElementById(id);
-  if(!el) return;
+  const el = document.getElementById(id); if(!el) return;
   let html = `<option value="">${placeholder}</option>`;
-  list.forEach(item => {
-    html += `<option value="${item}">${item}</option>`;
-  });
+  list.forEach(item => { html += `<option value="${item}">${item}</option>`; });
   el.innerHTML = html;
 }
 
-// ════════════════════════════════════════
-//  HANDLE MODEL CHANGE (ผูกสีเข้ากับรุ่นจากชีท)
-// ════════════════════════════════════════
 function handleModelChange() {
-  const modelSel = document.getElementById("f-model");
+  const modelVal = document.getElementById("f-model").value;
   const colorSel = document.getElementById("f-color");
   const hintEl = document.getElementById("color-hint");
-  
-  if(!modelSel || !colorSel) return;
-  const modelVal = modelSel.value;
-  
   if(!modelVal) {
     colorSel.innerHTML = '<option value="">— เลือกรุ่นก่อน —</option>';
-    colorSel.disabled = true;
-    if(hintEl) hintEl.textContent = "";
-    return;
+    colorSel.disabled = true; hintEl.textContent = ""; return;
   }
-  
   let allowedColors = [];
-  // ค้นหารุ่นในแบบ Case-Insensitive เพื่อดึงคู่สีจาก OPTIONS.modelColors ที่มาจากชีท
   if(OPTIONS.modelColors) {
     const foundKey = Object.keys(OPTIONS.modelColors).find(k => k.toLowerCase() === modelVal.toLowerCase());
-    if(foundKey) {
-      allowedColors = OPTIONS.modelColors[foundKey];
-    }
+    if(foundKey) allowedColors = OPTIONS.modelColors[foundKey];
   }
-  
-  // หากรุ่นนี้ไม่มีสีผูกไว้ ให้ใช้ฐานสีรวมทั้งหมดแทน
-  if(allowedColors.length === 0 && OPTIONS.color) {
-    allowedColors = OPTIONS.color;
-  }
+  if(allowedColors.length === 0 && OPTIONS.color) allowedColors = OPTIONS.color;
   
   if(allowedColors.length > 0) {
     let html = '<option value="">— เลือกสี —</option>';
-    allowedColors.forEach(c => {
-      html += `<option value="${c}">${c}</option>`;
-    });
-    colorSel.innerHTML = html;
-    colorSel.disabled = false;
-    if(hintEl) hintEl.textContent = `💡 พบคู่สีที่ระบุบนระบบทั้งหมด ${allowedColors.length} สี`;
+    allowedColors.forEach(c => { html += `<option value="${c}">${c}</option>`; });
+    colorSel.innerHTML = html; colorSel.disabled = false;
+    hintEl.textContent = `💡 พบข้อมูลชุดสี ${allowedColors.length} สี บนระบบชีท`;
   } else {
-    colorSel.innerHTML = '<option value="">— ไม่พบข้อมูลสีในระบบ —</option>';
-    colorSel.disabled = true;
-    if(hintEl) hintEl.textContent = "⚠️ ไม่พบสีของรุ่นนี้บนฐานข้อมูลชีท กรุณาโหลดออปชันใหม่หรือเพิ่มในชีท";
+    colorSel.innerHTML = '<option value="">— ไม่พบข้อมูลสี —</option>';
+    colorSel.disabled = true; hintEl.textContent = "⚠️ ไม่พบสีของรุ่นนี้ในฐานข้อมูลออปชัน";
   }
 }
 
-// ════════════════════════════════════════
-//  LOAD OPTIONS FROM GOOGLE SHEETS
-// ════════════════════════════════════════
 async function loadOptionsFromSheet(showStatus=false){
-  if(!CFG.scriptUrl) return;
+  if(!CFG.scriptUrl || CFG.scriptUrl.includes("EXAMPLE")) return;
   const statusEl = document.getElementById("options-status");
-  if(statusEl) statusEl.textContent = "กำลังโหลดข้อมูลจากชีท...";
+  if(statusEl) statusEl.textContent = "กำลังโหลด...";
   try{
     const res  = await fetch(`${CFG.scriptUrl}?action=getOptions`);
     const data = await res.json();
     if(data.success && data.options){
       const o = data.options;
-      if(o.model)  OPTIONS.model  = o.model;
-      if(o.size)   OPTIONS.size   = o.size;
-      if(o.color)  OPTIONS.color  = o.color;
-      if(o.defect) OPTIONS.defect = o.defect;
-      if(o.modelColors) OPTIONS.modelColors = o.modelColors;
-      
-      // บันทึกลงตัวแปรระบบหลัก ไม่ผูกค่าสร้างเองส่วนตัว
+      OPTIONS.model = o.model || [];
+      OPTIONS.size = o.size || [];
+      OPTIONS.color = o.color || [];
+      OPTIONS.defect = o.defect || [];
+      OPTIONS.modelColors = o.modelColors || {};
       localStorage.setItem(LS.OPTIONS, JSON.stringify(OPTIONS));
       rebuildDropdowns();
-      
-      if(statusEl) statusEl.textContent = "✅ อัปเดตล่าสุด: " + new Date().toLocaleTimeString('th-TH');
-      if(showStatus) showToast("✅ โหลด Dropdown ล่าสุดจากชีทเรียบร้อย","success");
+      if(statusEl) statusEl.textContent = "✅ อัปเดตเมื่อ: " + new Date().toLocaleTimeString('th-TH');
+      if(showStatus) showToast("✅ อัปเดตชุดตัวเลือกจากชีทสำเร็จ","success");
     }
   }catch(err){
     if(statusEl) statusEl.textContent = "❌ ดึงข้อมูลพลาด";
-    if(showStatus) showToast("❌ ไม่สามารถดึงข้อมูลออปชันจากชีทได้","error");
   }
 }
-
-function reloadOptions() {
-  loadOptionsFromSheet(true);
-}
+function reloadOptions() { loadOptionsFromSheet(true); }
 
 // ════════════════════════════════════════
-//  SUBMIT RECORD & INTERACTION
+//  SUBMIT RECORD & SYNC
 // ════════════════════════════════════════
 function selectSeverity(el) {
   document.querySelectorAll(".severity-pill").forEach(p=>p.classList.remove("active"));
-  el.classList.add("active");
-  selectedSeverityValue = el.getAttribute("data-val");
+  el.classList.add("active"); selectedSeverityValue = el.getAttribute("data-val");
 }
-
 function selectEditSev(el) {
   document.querySelectorAll(".edit-sev-pill").forEach(p=>p.classList.remove("active"));
-  el.classList.add("active");
-  selectedEditSeverityValue = el.getAttribute("data-val");
+  el.classList.add("active"); selectedEditSeverityValue = el.getAttribute("data-val");
 }
-
 function resetForm() {
-  document.getElementById("f-model").value = "";
-  document.getElementById("f-size").value = "";
-  const cSel = document.getElementById("f-color");
-  cSel.innerHTML = '<option value="">— เลือกรุ่นก่อน —</option>';
-  cSel.disabled = true;
-  document.getElementById("f-defect").value = "";
-  document.getElementById("f-note").value = "";
-  document.querySelectorAll(".severity-pill").forEach(p=>p.classList.remove("active"));
-  selectedSeverityValue = "";
-  document.getElementById("color-hint").textContent = "";
+  document.getElementById("f-model").value = ""; document.getElementById("f-size").value = "";
+  document.getElementById("f-color").innerHTML = '<option value="">— เลือกรุ่นก่อน —</option>';
+  document.getElementById("f-color").disabled = true; document.getElementById("f-defect").value = "";
+  document.getElementById("f-note").value = ""; document.querySelectorAll(".severity-pill").forEach(p=>p.classList.remove("active"));
+  selectedSeverityValue = ""; document.getElementById("color-hint").textContent = "";
 }
 
 function handleSubmit() {
@@ -690,53 +567,32 @@ function handleSubmit() {
   const color = document.getElementById("f-color").value;
   const defect = document.getElementById("f-defect").value;
   const note = document.getElementById("f-note").value.trim();
-  
-  if(!model || !size || !color || !defect || !selectedSeverityValue) {
-    return showToast("⚠️ กรุณากรอกข้อมูลดาว (*) ให้ครบถ้วน","warning");
-  }
+  if(!model || !size || !color || !defect || !selectedSeverityValue) return showToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน","warning");
   
   const now = new Date();
-  const offset = 7 * 60; // UTC+7
+  const offset = 7 * 60;
   const localTime = new Date(now.getTime() + (offset + now.getTimezoneOffset()) * 60000);
-  
   const newRec = {
     id: "ID-" + Date.now() + "-" + Math.floor(Math.random()*1000),
     timestamp: localTime.toISOString().replace("T"," ").substring(0,19),
-    user: currentUser,
-    model: model,
-    size: size,
-    color: color,
-    defect: defect,
-    severity: selectedSeverityValue,
-    note: note,
-    sync: "pending"
+    user: currentUser, model: model, size: size, color: color, defect: defect, severity: selectedSeverityValue, note: note, sync: "pending"
   };
-  
   RECORDS.unshift(newRec);
   localStorage.setItem(LS.RECORDS, JSON.stringify(RECORDS));
-  
-  resetForm();
-  renderTable();
-  updateStats();
-  showToast("💾 บันทึกสำเร็จลง Local แล้ว","success");
-  
+  resetForm(); renderTable(); updateStats();
+  showToast("💾 บันทึกลงเครื่องแล้ว กำลังส่งไปชีท...","success");
   syncRecordToSheet(newRec);
 }
 
-// ════════════════════════════════════════
-//  SYNCING SYSTEM
-// ════════════════════════════════════════
 async function syncRecordToSheet(rec) {
-  if(!CFG.scriptUrl) return;
+  if(!CFG.scriptUrl || CFG.scriptUrl.includes("EXAMPLE")) return;
   updateRecordSyncStatus(rec.id, "syncing");
   try {
-    const res = await fetch(CFG.scriptUrl, {
-      method: "POST",
-      mode: "no-cors",
+    await fetch(CFG.scriptUrl, {
+      method: "POST", mode: "no-cors",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "add", record: rec })
     });
-    // โหมด no-cors จะเข้าบล็อกนี้ทันทีเนื่องจากอ่านค่าไม่ได้ ให้ถือว่าส่งสำเร็จ
     updateRecordSyncStatus(rec.id, "synced");
   } catch(e) {
     updateRecordSyncStatus(rec.id, "fail");
@@ -746,101 +602,59 @@ async function syncRecordToSheet(rec) {
 function updateRecordSyncStatus(id, status) {
   const idx = RECORDS.findIndex(r => r.id === id);
   if(idx !== -1) {
-    RECORDS[idx].sync = status;
-    localStorage.setItem(LS.RECORDS, JSON.stringify(RECORDS));
-    renderTable();
-    checkSyncStatus();
+    RECORDS[idx].sync = status; localStorage.setItem(LS.RECORDS, JSON.stringify(RECORDS));
+    renderTable(); checkSyncStatus();
   }
 }
 
 function checkSyncStatus() {
   const pending = RECORDS.filter(r => r.sync === "pending" || r.sync === "fail").length;
-  const badge = document.getElementById("sync-badge");
-  const dot = document.getElementById("sync-dot");
-  const text = document.getElementById("sync-text");
   const banner = document.getElementById("pending-banner");
-  const pCount = document.getElementById("pending-count");
-  
   if(pending > 0) {
-    badge.className = "sync-badge syncing";
-    dot.className = "sync-dot pulse";
-    text.textContent = `${pending} รอ Sync`;
-    if(banner) banner.classList.add("show");
-    if(pCount) pCount.textContent = pending;
+    document.getElementById("sync-badge").className = "sync-badge error";
+    document.getElementById("sync-text").textContent = `${pending} รายการค้าง`;
+    if(banner) { banner.style.display = "flex"; document.getElementById("pending-count").textContent = pending; }
   } else {
-    badge.className = "sync-badge ok";
-    dot.className = "sync-dot";
-    text.textContent = "Sheets Connected";
-    if(banner) banner.classList.remove("show");
+    document.getElementById("sync-badge").className = "sync-badge ok";
+    document.getElementById("sync-text").textContent = "Sheets Connected";
+    if(banner) banner.style.display = "none";
   }
 }
-
-function retrySync() {
-  const targets = RECORDS.filter(r => r.sync === "pending" || r.sync === "fail");
-  if(targets.length === 0) return;
-  showToast(`🔄 กำลังลองส่งข้อมูล ${targets.length} รายการ...`,"info");
-  targets.forEach(r => syncRecordToSheet(r));
-}
+function retrySync() { RECORDS.filter(r => r.sync === "pending" || r.sync === "fail").forEach(r => syncRecordToSheet(r)); }
 
 // ════════════════════════════════════════
-//  TABLE RENDER & STATS
+//  RENDER & EDIT CONTROL
 // ════════════════════════════════════════
 function renderTable() {
-  const tbody = document.getElementById("defect-tbody");
-  if(!tbody) return;
-  
+  const tbody = document.getElementById("defect-tbody"); if(!tbody) return;
   const fUser = document.getElementById("filter-user").value;
   const fModel = document.getElementById("filter-model").value;
   const fSev = document.getElementById("filter-sev").value;
   const fDate = document.getElementById("filter-date").value;
-  
   let filtered = RECORDS;
-  
   if(fUser)  filtered = filtered.filter(r => r.user === fUser);
   if(fModel) filtered = filtered.filter(r => r.model === fModel);
   if(fSev)   filtered = filtered.filter(r => r.severity === fSev);
   if(fDate)  filtered = filtered.filter(r => r.timestamp && r.timestamp.startsWith(fDate));
-  
   document.getElementById("table-count").textContent = `${filtered.length} รายการ`;
-  
   if(filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">🔍</div><p>ไม่พบประวัติข้อมูลในเงื่อนไขนี้</p></div></td></tr>`;
-    return;
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">🔍</div><p>ไม่พบประวัติข้อมูล</p></div></td></tr>`; return;
   }
-  
   let html = "";
   filtered.forEach(r => {
-    let syncIcon = `<span class="row-sync local" title="Local"></span>`;
-    if(r.sync === "synced")  syncIcon = `<span class="row-sync synced" title="สำเร็จ"></span>`;
-    if(r.sync === "syncing") syncIcon = `<span class="row-sync pending" title="กำลังส่ง..."></span>`;
-    if(r.sync === "fail")    syncIcon = `<span class="row-sync fail" title="ล้มเหลว"></span>`;
-    
-    let sevClass = "low";
-    if(r.severity === "ปานกลาง") sevClass = "mid";
-    if(r.severity === "มาก")      sevClass = "high";
-    
-    const timeStr = r.timestamp ? r.timestamp.substring(11,16) : "--:--";
-    
+    let syncIcon = `<span class="row-sync local"></span>`;
+    if(r.sync === "synced")  syncIcon = `<span class="row-sync synced"></span>`;
+    if(r.sync === "syncing") syncIcon = `<span class="row-sync pending"></span>`;
+    if(r.sync === "fail")    syncIcon = `<span class="row-sync fail"></span>`;
+    let sevClass = r.severity === "มาก" ? "high" : (r.severity === "ปานกลาง" ? "mid" : "low");
     html += `<tr>
       <td style="text-align:center">${syncIcon}</td>
-      <td class="text-muted">${timeStr}</td>
-      <td><strong>${r.user || "—"}</strong></td>
-      <td>
-        <span class="chip chip-purple">${r.model}</span> 
-        <span class="chip chip-gray">${r.size}</span>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:3px">🎨 สี: <strong>${r.color}</strong></div>
-      </td>
-      <td>
-        <div class="defect-type">${r.defect}</div>
-        ${r.note ? `<div class="defect-note">📝 ${r.note}</div>` : ""}
-      </td>
+      <td class="text-muted">${r.timestamp?r.timestamp.substring(11,16):"--:--"}</td>
+      <td><strong>${r.user||"—"}</strong></td>
+      <td><span class="chip chip-purple">${r.model}</span> <span class="chip chip-gray">${r.size}</span><br><small class="text-muted">🎨 สี: ${r.color}</small></td>
+      <td><strong>${r.defect}</strong>${r.note?`<div style="font-size:11px;color:var(--text-muted)">📝 ${r.note}</div>`:""}</td>
       <td><span class="sev-chip sev-chip-${sevClass}">${r.severity}</span></td>
-      <td>
-        <div class="row-actions">
-          <button class="btn-edit" onclick="openEdit('${r.id}')" title="แก้ไข">✏️</button>
-          <button class="btn-del" onclick="openConfirm('${r.id}')" title="ลบ">🗑️</button>
-        </div>
-      </td>
+      <td><div class="row-actions"><button class="btn-edit" onclick="openEdit('${r.id}')">✏️</button><button class="btn-del" onclick="openConfirm('${r.id}')">🗑️</button></div></td>
     </tr>`;
   });
   tbody.innerHTML = html;
@@ -848,188 +662,87 @@ function renderTable() {
 
 function updateStats() {
   const dStr = new Date().toLocaleDateString('en-CA');
-  const todayRecs = RECORDS.filter(r => r.timestamp && r.timestamp.startsWith(dStr));
-  
   document.getElementById("stat-total").textContent = RECORDS.length;
-  document.getElementById("stat-today").textContent = todayRecs.length;
+  document.getElementById("stat-today").textContent = RECORDS.filter(r => r.timestamp && r.timestamp.startsWith(dStr)).length;
   document.getElementById("stat-high").textContent = RECORDS.filter(r => r.severity === "มาก").length;
   document.getElementById("stat-mid").textContent = RECORDS.filter(r => r.severity === "ปานกลาง").length;
 }
 
-// ════════════════════════════════════════
-//  EDIT & DELETE CONTROL
-// ════════════════════════════════════════
 function openEdit(id) {
-  const r = RECORDS.find(x => x.id === id);
-  if(!r) return;
-  currentEditId = id;
-  
-  document.getElementById("edit-modal-sub").textContent = `รหัสอ้างอิง: ${id}`;
-  
-  // โหลดข้อมูลตัวเลือกพื้นฐาน
-  const mSel = document.getElementById("edit-model");
+  const r = RECORDS.find(x => x.id === id); if(!r) return;
+  currentEditId = id; document.getElementById("edit-modal-sub").textContent = `รหัส: ${id}`;
   buildSelect("edit-model", OPTIONS.model || [], "— เลือกชื่อรุ่น —");
   buildSelect("edit-size", OPTIONS.size || [], "— เลือก Size —");
   buildSelect("edit-defect", OPTIONS.defect || [], "— เลือกประเภทตำหนิ —");
-  
-  mSel.value = r.model;
-  
-  // โหลดคู่สีของรุ่นนั้นโดยเฉพาะ
-  onEditModelChange();
-  
-  document.getElementById("edit-size").value = r.size;
-  document.getElementById("edit-color").value = r.color;
-  document.getElementById("edit-defect").value = r.defect;
-  document.getElementById("edit-note").value = r.note || "";
-  
+  document.getElementById("edit-model").value = r.model; onEditModelChange();
+  document.getElementById("edit-size").value = r.size; document.getElementById("edit-color").value = r.color;
+  document.getElementById("edit-defect").value = r.defect; document.getElementById("edit-note").value = r.note || "";
   selectedEditSeverityValue = r.severity;
   document.querySelectorAll(".edit-sev-pill").forEach(p => {
-    if(p.getAttribute("data-val") === r.severity) p.classList.add("active");
-    else p.classList.remove("active");
+    p.classList.toggle("active", p.getAttribute("data-val") === r.severity);
   });
-  
   document.getElementById("edit-modal").classList.add("open");
 }
-
 function onEditModelChange() {
   const modelVal = document.getElementById("edit-model").value;
   const colorSel = document.getElementById("edit-color");
-  if(!colorSel) return;
-  
   let allowedColors = [];
   if(modelVal && OPTIONS.modelColors) {
     const foundKey = Object.keys(OPTIONS.modelColors).find(k => k.toLowerCase() === modelVal.toLowerCase());
     if(foundKey) allowedColors = OPTIONS.modelColors[foundKey];
   }
   if(allowedColors.length === 0 && OPTIONS.color) allowedColors = OPTIONS.color;
-  
   let html = '<option value="">— เลือกสี —</option>';
   allowedColors.forEach(c => { html += `<option value="${c}">${c}</option>`; });
   colorSel.innerHTML = html;
 }
-
-function closeEdit() {
-  document.getElementById("edit-modal").classList.remove("open");
-  currentEditId = null;
-}
-
+function closeEdit() { document.getElementById("edit-modal").classList.remove("open"); }
 function saveEdit() {
-  const idx = RECORDS.findIndex(x => x.id === currentEditId);
-  if(idx === -1) return;
-  
-  const model = document.getElementById("edit-model").value;
-  const size = document.getElementById("edit-size").value;
-  const color = document.getElementById("edit-color").value;
-  const defect = document.getElementById("edit-defect").value;
-  const note = document.getElementById("edit-note").value.trim();
-  
-  if(!model || !size || !color || !defect || !selectedEditSeverityValue) {
-    return showToast("⚠️ กรุณากรอกข้อมูลที่สำคัญให้ครบถ้วน","warning");
-  }
-  
-  RECORDS[idx].model = model;
-  RECORDS[idx].size = size;
-  RECORDS[idx].color = color;
-  RECORDS[idx].defect = defect;
+  const idx = RECORDS.findIndex(x => x.id === currentEditId); if(idx === -1) return;
+  RECORDS[idx].model = document.getElementById("edit-model").value;
+  RECORDS[idx].size = document.getElementById("edit-size").value;
+  RECORDS[idx].color = document.getElementById("edit-color").value;
+  RECORDS[idx].defect = document.getElementById("edit-defect").value;
   RECORDS[idx].severity = selectedEditSeverityValue;
-  RECORDS[idx].note = note;
-  RECORDS[idx].sync = "pending"; // บังคับสถานะเพื่อแจ้งส่งอัปเดตใหม่
-  
+  RECORDS[idx].note = document.getElementById("edit-note").value.trim();
+  RECORDS[idx].sync = "pending";
   localStorage.setItem(LS.RECORDS, JSON.stringify(RECORDS));
-  closeEdit();
-  renderTable();
-  updateStats();
-  showToast("✏️ แก้ไขข้อมูลเรียบร้อยแล้ว","success");
-  
-  // ส่ง POST ขออัปเดตหรือเพิ่ม row ใหม่แบบกึ่งอัตโนมัติไปยังเว็บแอป
+  closeEdit(); renderTable(); updateStats(); showToast("✏️ แก้ไขข้อมูลเรียบร้อย","success");
   if(CFG.scriptUrl) {
-    fetch(CFG.scriptUrl, {
-      method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "update", record: RECORDS[idx] })
-    }).then(() => updateRecordSyncStatus(currentEditId, "synced"))
-      .catch(() => updateRecordSyncStatus(currentEditId, "fail"));
+    fetch(CFG.scriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "update", record: RECORDS[idx] }) })
+    .then(() => updateRecordSyncStatus(currentEditId, "synced"));
   }
 }
-
 function openConfirm(id) {
-  const r = RECORDS.find(x => x.id === id);
-  if(!r) return;
+  const r = RECORDS.find(x => x.id === id); if(!r) return;
   document.getElementById("confirm-detail").textContent = `รุ่น: ${r.model} | สี: ${r.color} | ตำหนิ: ${r.defect}`;
-  const okBtn = document.getElementById("confirm-ok-btn");
-  okBtn.onclick = () => executeDelete(id);
+  document.getElementById("confirm-ok-btn").onclick = () => {
+    const idx = RECORDS.findIndex(x => x.id === id);
+    if(idx !== -1) {
+      RECORDS.splice(idx, 1); localStorage.setItem(LS.RECORDS, JSON.stringify(RECORDS));
+      renderTable(); updateStats(); closeConfirm(); showToast("🗑️ ลบรายการสำเร็จ","success");
+      if(CFG.scriptUrl) fetch(CFG.scriptUrl, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "delete", id: id }) });
+    }
+  };
   document.getElementById("confirm-modal").classList.add("open");
 }
-
-function closeConfirm() {
-  document.getElementById("confirm-modal").classList.remove("open");
-}
-
-function executeDelete(id) {
-  const idx = RECORDS.findIndex(x => x.id === id);
-  if(idx !== -1) {
-    RECORDS.splice(idx, 1);
-    localStorage.setItem(LS.RECORDS, JSON.stringify(RECORDS));
-    renderTable();
-    updateStats();
-    closeConfirm();
-    showToast("🗑️ ลบรายการเรียบร้อยแล้ว","success");
-    
-    if(CFG.scriptUrl) {
-      fetch(CFG.scriptUrl, {
-        method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "delete", id: id })
-      }).then(() => checkSyncStatus());
-    }
-  }
-}
-
-// ════════════════════════════════════════
-//  SETTINGS DIALOG
-// ════════════════════════════════════════
-function openSetup() {
-  document.getElementById("cfg-url").value = CFG.scriptUrl;
-  document.getElementById("cfg-users").value = CFG.users;
-  document.getElementById("setup-modal").classList.add("open");
-}
-function closeSetup() {
-  document.getElementById("setup-modal").classList.remove("open");
-}
+function closeConfirm() { document.getElementById("confirm-modal").classList.remove("open"); }
+function openSetup() { document.getElementById("cfg-url").value = CFG.scriptUrl; document.getElementById("setup-modal").classList.add("open"); }
+  function closeSetup() { document.getElementById("setup-modal").classList.remove("open"); }
 function saveSetup() {
-  const url = document.getElementById("cfg-url").value.trim();
-  const users = document.getElementById("cfg-users").value.trim();
-  if(url) CFG.scriptUrl = url;
-  if(users) CFG.users = users;
-  
-  localStorage.setItem(LS.CFG, JSON.stringify(CFG));
-  closeSetup();
-  showToast("⚙️ บันทึกการตั้งค่าระบบเรียบร้อย","success");
-  loadOptionsFromSheet(false);
+  const url = document.getElementById("cfg-url").value.trim(); if(url) CFG.scriptUrl = url;
+  localStorage.setItem(LS.CFG, JSON.stringify(CFG)); closeSetup(); showToast("⚙️ บันทึกการตั้งค่าเรียบร้อย","success"); loadOptionsFromSheet(false);
 }
-
-// ════════════════════════════════════════
-//  EXPORT TO CSV & TOAST HELPERS
-// ════════════════════════════════════════
 function exportToCSV() {
-  if(RECORDS.length === 0) return showToast("⚠️ ไม่มีข้อมูลที่จะส่งออก","warning");
   let csv = "\uFEFFID,Timestamp,User,Model,Size,Color,Defect,Severity,Note\n";
-  RECORDS.forEach(r => {
-    csv += `"${r.id}","${r.timestamp}","${r.user}","${r.model}","${r.size}","${r.color}","${r.defect}","${r.severity}","${r.note||""}"\n`;
-  });
+  RECORDS.forEach(r => { csv += `"${r.id}","${r.timestamp}","${r.user}","${r.model}","${r.size}","${r.color}","${r.defect}","${r.severity}","${r.note||""}"\n`; });
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `QC_Defects_Export_${new Date().toLocaleDateString('en-CA')}.csv`;
-  a.click();
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `QC_Export_${new Date().toLocaleDateString('en-CA')}.csv`; a.click();
 }
-
 function showToast(msg, type="info") {
-  const t = document.getElementById("toast");
-  if(!t) return;
-  t.textContent = msg;
-  t.className = `show ${type}`;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.className = "", 3500);
+  const t = document.getElementById("toast"); if(!t) return;
+  t.textContent = msg; t.className = `show ${type}`;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.className = "", 3500);
 }
 </script>
 </body>
