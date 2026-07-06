@@ -1176,6 +1176,9 @@ function showToast(msg,type=""){
 // ════════════════════════════════════════
 //  LOAD OPTIONS FROM SHEETS
 // ════════════════════════════════════════
+// ════════════════════════════════════════
+//  LOAD OPTIONS FROM SHEETS (เวอร์ชันปลอดภัย ไม่ทำลายข้อมูล Records)
+// ════════════════════════════════════════
 async function loadOptionsFromSheet(showStatus=false){
   if(!CFG.scriptUrl) return;
   const statusEl = document.getElementById("options-status");
@@ -1190,15 +1193,20 @@ async function loadOptionsFromSheet(showStatus=false){
       if(o.color  && o.color.length)  OPTIONS.color  = o.color;
       if(o.defect && o.defect.length) OPTIONS.defect = o.defect;
       if(o.modelColors) OPTIONS.modelColors = o.modelColors;
-      OPTIONS.colors = OPTIONS.color; // alias
-      saveOptions();
+      OPTIONS.colors = OPTIONS.color; 
+      
+      // ❌ ห้ามเรียกใช้ saveOptions() ตรงนี้เด็ดขาด เพราะมันจะเอาไปปนกับ records 
+      // เปลี่ยนเป็นบันทึกเฉพาะตัวเลือกแยกต่างหากลง localStorage แทน:
+      localStorage.setItem("qc_options", JSON.stringify(OPTIONS));
+      
       rebuildDropdowns();
       if(statusEl) statusEl.textContent = "✅ โหลดแล้ว " + new Date().toLocaleTimeString('th-TH');
       if(showStatus) showToast("✅ โหลด Dropdown จาก Sheets แล้ว","success");
     }
-  }catch(e){
-    if(statusEl) statusEl.textContent = "⚠️ โหลดไม่ได้";
-    if(showStatus) showToast("⚠️ โหลด Options ไม่ได้ — ใช้ข้อมูลเดิม","error");
+  }catch(err){
+    console.error(err);
+    if(statusEl) statusEl.textContent = "❌ โหลดล้มเหลว";
+    if(showStatus) showToast("❌ ไม่สามารถโหลดข้อมูลตัวเลือกได้","danger");
   }
 }
 
