@@ -211,7 +211,7 @@
   .chip{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
   .chip-purple{background:var(--accent-light);color:var(--accent);}
   .chip-gray{background:#F3F0FF;color:var(--text-muted);border:1px solid var(--border);}
-  .text-muted{color:var(--text-muted);}
+  .text-muted{color:var(--text-muted);} .cell-long{max-width:260px;white-space:normal;line-height:1.35;} .cell-money{font-weight:700;white-space:nowrap;}
   td .defect-type{font-weight:600;}
   td .defect-note{font-size:11px;color:var(--text-muted);margin-top:1px;}
   .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted);}
@@ -308,16 +308,24 @@
         <select id="edit-model" onchange="onEditModelChange()"></select>
       </div>
       <div class="edit-field">
+        <label>ราคา</label>
+        <input type="text" id="edit-price" placeholder="เช่น 890 หรือ -">
+      </div>
+      <div class="edit-field">
+        <label>ส่วนลด</label>
+        <input type="text" id="edit-discount" placeholder="เช่น 100, 20%, ลดเหลือ 590">
+      </div>
+      <div class="edit-field full">
         <label>Size *</label>
-        <select id="edit-size"></select>
+        <textarea id="edit-size" rows="2" placeholder="เช่น M อก 39 แนะนำ -45 ต้นแขน..."></textarea>
       </div>
       <div class="edit-field">
         <label>Color *</label>
         <select id="edit-color"></select>
       </div>
-      <div class="edit-field">
+      <div class="edit-field full">
         <label>ประเภทตำหนิ *</label>
-        <select id="edit-defect"></select>
+        <textarea id="edit-defect" rows="2" placeholder="พิมพ์ได้หลายตำหนิ เช่น รูด้านหลัง, คราบเปื้อน"></textarea>
       </div>
       <div class="edit-field full">
         <label>ระดับความรุนแรง *</label>
@@ -386,12 +394,16 @@
           </div>
         </div>
         <div class="field">
-          <label>Size *</label>
-          <div class="combo-wrap" id="combo-size">
-            <input class="combo-input" type="text" placeholder="เลือกหรือพิมพ์ Size..." autocomplete="off" id="f-size" oninput="comboFilter('size')" onfocus="comboOpen('size')" onblur="comboBlur('size')">
-            <span class="combo-arrow">▾</span>
-            <div class="combo-dropdown" id="drop-size"></div>
-          </div>
+          <label>ราคา</label>
+          <input class="combo-input" type="text" placeholder="เช่น 890 หรือ -" autocomplete="off" id="f-price">
+        </div>
+        <div class="field">
+          <label>ส่วนลด</label>
+          <input class="combo-input" type="text" placeholder="เช่น 100, 20%, ลดเหลือ 590" autocomplete="off" id="f-discount">
+        </div>
+        <div class="field">
+          <label>Size / รายละเอียดไซซ์ *</label>
+          <textarea id="f-size" placeholder="เช่น M อก 39 แนะนำ -45 ต้นแขน 13-18 ความยาว 22.5"></textarea>
         </div>
         <div class="field">
           <label>Color *</label>
@@ -404,7 +416,11 @@
         </div>
         <div class="field">
           <label>ประเภทตำหนิ *</label>
-          <select id="f-defect"><option value="">— เลือกประเภทตำหนิ —</option></select>
+          <div class="combo-wrap" id="combo-defect">
+            <input class="combo-input" type="text" placeholder="เลือกหรือพิมพ์ตำหนิ เช่น รูด้านหลัง, คราบเปื้อน" autocomplete="off" id="f-defect" oninput="comboFilter('defect')" onfocus="comboOpen('defect')" onblur="comboBlur('defect')">
+            <span class="combo-arrow">▾</span>
+            <div class="combo-dropdown" id="drop-defect"></div>
+          </div>
         </div>
         <div class="field full">
           <label>ระดับความรุนแรง *</label>
@@ -450,11 +466,11 @@
           <thead>
             <tr>
               <th>Sync</th><th>#</th><th>วันที่</th><th>เวลา</th>
-              <th>รุ่น</th><th>Size</th><th>Color</th><th>ตำหนิ</th><th>ระดับ</th><th>หมายเหตุ</th><th>โดย</th><th>จัดการ</th>
+              <th>รุ่น</th><th>ราคา</th><th>ส่วนลด</th><th>Size</th><th>Color</th><th>ตำหนิ</th><th>ระดับ</th><th>หมายเหตุ</th><th>โดย</th><th>จัดการ</th>
             </tr>
           </thead>
           <tbody id="records-body">
-            <tr><td colspan="12"><div class="empty-state"><div class="icon">📋</div><p>ยังไม่มีรายการ</p></div></td></tr>
+            <tr><td colspan="14"><div class="empty-state"><div class="icon">📋</div><p>ยังไม่มีรายการ</p></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -755,6 +771,7 @@ function buildDropdown(field, filter=""){
 
 function hl(text,q){ if(!q) return text; const re=new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'); return text.replace(re,'<strong style="color:var(--accent)">$1</strong>'); }
 function escH(s){ return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function escAttr(s){ return String(s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function comboOpen(field){ clearTimeout(blurTimers[field]); document.getElementById(`combo-${field}`).classList.add("open"); buildDropdown(field,document.getElementById(`f-${field}`).value); }
 function comboBlur(field){ blurTimers[field]=setTimeout(()=>document.getElementById(`combo-${field}`).classList.remove("open"),180); }
 function comboFilter(field){
@@ -811,12 +828,11 @@ function init(){
   document.getElementById("login-pass").addEventListener("keydown",e=>{ if(e.key==="Enter") doLogin(); });
   document.getElementById("login-user").addEventListener("keydown",e=>{ if(e.key==="Enter") document.getElementById("login-pass").focus(); });
   document.addEventListener("click",e=>{
-    ["model","size","color"].forEach(f=>{ if(!document.getElementById(`combo-${f}`).contains(e.target)) document.getElementById(`combo-${f}`).classList.remove("open"); });
+    ["model","color","defect"].forEach(f=>{ if(!document.getElementById(`combo-${f}`).contains(e.target)) document.getElementById(`combo-${f}`).classList.remove("open"); });
   });
 }
 
 function rebuildDropdowns(){
-  fillSelect("f-defect",OPTIONS.defect||[]);
   fillSelectFromArr("filter-model",OPTIONS.model||[],"ทุกรุ่น");
   fillSelectFromArr("filter-size",OPTIONS.size||[],"ทุก Size");
   fillSelectFromArr("filter-defect",OPTIONS.defect||[],"ทุกประเภทตำหนิ");
@@ -905,8 +921,7 @@ function doLogout(){
 // ════════════════════════════════════════
 function selectSeverity(el){ document.querySelectorAll(".severity-pill").forEach(p=>p.classList.remove("active")); el.classList.add("active"); selectedSeverity=el.dataset.val; }
 function resetForm(){
-  ["f-model","f-size","f-color"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("f-defect").selectedIndex=0;
+  ["f-model","f-price","f-discount","f-size","f-color","f-defect"].forEach(id=>document.getElementById(id).value="");
   document.getElementById("f-note").value="";
   document.querySelectorAll(".severity-pill").forEach(p=>p.classList.remove("active"));
   selectedSeverity=""; onModelChange();
@@ -914,9 +929,11 @@ function resetForm(){
 
 async function submitRecord(){
   const model=document.getElementById("f-model").value.trim();
+  const price=document.getElementById("f-price").value.trim();
+  const discount=document.getElementById("f-discount").value.trim();
   const size=document.getElementById("f-size").value.trim();
   const color=document.getElementById("f-color").value.trim();
-  const defect=document.getElementById("f-defect").value;
+  const defect=document.getElementById("f-defect").value.trim();
   const note=document.getElementById("f-note").value.trim();
   if(!model||!size||!color||!defect||!selectedSeverity){ showToast("❗ กรุณากรอกข้อมูลให้ครบ","error"); return; }
 
@@ -926,7 +943,7 @@ async function submitRecord(){
   const th=nowTH();
   const record={
     id:`r_${Date.now()}`, datetime:fDT(th), date:fDate(th), time:fTime(th), timezone:"UTC+7",
-    model, size, color, defect, severity:selectedSeverity, note, by:currentUser,
+    model, price, discount, size, color, defect, severity:selectedSeverity, note, by:currentUser,
     syncStatus:CFG.scriptUrl?"pending":"memory", createdAt:Date.now()
   };
 
@@ -945,6 +962,16 @@ async function submitRecord(){
     if(!OPTIONS.size) OPTIONS.size=[];
     OPTIONS.size.push(size);
     addOptionToSheets("size", size);
+  }
+  if(defect){
+    if(!OPTIONS.defect) OPTIONS.defect=[];
+    defect.split(/[,，]/).map(s=>s.trim()).filter(Boolean).forEach(d=>{
+      if(!OPTIONS.defect.includes(d)){
+        OPTIONS.defect.push(d);
+        OPTIONS.defect.sort((a,b)=>a.localeCompare(b,'th'));
+        addOptionToSheets("defect", d);
+      }
+    });
   }
   if(model && color){
     if(!OPTIONS.modelColors) OPTIONS.modelColors={};
@@ -1013,10 +1040,9 @@ function openEdit(id){
   mSel.innerHTML=`<option value="">— เลือกรุ่น —</option>`;
   (OPTIONS.model||[]).forEach(m=>{ const o=document.createElement("option"); o.value=m; o.textContent=m; if(m===r.model) o.selected=true; mSel.appendChild(o); });
 
-  // fill size select
-  const sSel=document.getElementById("edit-size");
-  sSel.innerHTML=`<option value="">— เลือก Size —</option>`;
-  (OPTIONS.size||[]).forEach(s=>{ const o=document.createElement("option"); o.value=s; o.textContent=s; if(s===r.size) o.selected=true; sSel.appendChild(o); });
+  document.getElementById("edit-price").value=r.price||"";
+  document.getElementById("edit-discount").value=r.discount||"";
+  document.getElementById("edit-size").value=r.size||"";
 
   // fill color select (ตามรุ่น)
   const colors=getColorsForModel(r.model);
@@ -1026,10 +1052,7 @@ function openEdit(id){
   // ถ้าสีของ record ไม่อยู่ใน list → เพิ่มให้
   if(r.color && !colors.includes(r.color)){ const o=document.createElement("option"); o.value=r.color; o.textContent=r.color+" (เดิม)"; o.selected=true; cSel.appendChild(o); }
 
-  // fill defect select
-  const dSel=document.getElementById("edit-defect");
-  dSel.innerHTML=`<option value="">— เลือกตำหนิ —</option>`;
-  (OPTIONS.defect||[]).forEach(d=>{ const o=document.createElement("option"); o.value=d; o.textContent=d; if(d===r.defect) o.selected=true; dSel.appendChild(o); });
+  document.getElementById("edit-defect").value=r.defect||"";
 
   // severity pills
   document.querySelectorAll(".edit-sev-pill").forEach(p=>{ p.classList.toggle("active",p.dataset.val===r.severity); });
@@ -1043,9 +1066,11 @@ function closeEdit(){ document.getElementById("edit-modal").classList.remove("op
 
 async function saveEdit(){
   const model=document.getElementById("edit-model").value;
-  const size=document.getElementById("edit-size").value;
+  const price=document.getElementById("edit-price").value.trim();
+  const discount=document.getElementById("edit-discount").value.trim();
+  const size=document.getElementById("edit-size").value.trim();
   const color=document.getElementById("edit-color").value;
-  const defect=document.getElementById("edit-defect").value;
+  const defect=document.getElementById("edit-defect").value.trim();
   const note=document.getElementById("edit-note").value.trim();
   if(!model||!size||!color||!defect||!editingSeverity){ showToast("❗ กรุณากรอกข้อมูลให้ครบ","error"); return; }
 
@@ -1053,11 +1078,27 @@ async function saveEdit(){
   if(!r){ closeEdit(); return; }
 
   // อัพเดท fields
-  r.model=model; r.size=size; r.color=color; r.defect=defect;
+  r.model=model; r.price=price; r.discount=discount; r.size=size; r.color=color; r.defect=defect;
   r.severity=editingSeverity; r.note=note;
   r.updatedAt=Date.now();
   r.updatedBy=currentUser;
   if(CFG.scriptUrl) r.syncStatus="pending";
+
+  if(size && !(OPTIONS.size||[]).includes(size)){
+    if(!OPTIONS.size) OPTIONS.size=[];
+    OPTIONS.size.push(size);
+    addOptionToSheets("size", size);
+  }
+  if(defect){
+    if(!OPTIONS.defect) OPTIONS.defect=[];
+    defect.split(/[,，]/).map(s=>s.trim()).filter(Boolean).forEach(d=>{
+      if(!OPTIONS.defect.includes(d)){
+        OPTIONS.defect.push(d);
+        OPTIONS.defect.sort((a,b)=>a.localeCompare(b,'th'));
+        addOptionToSheets("defect", d);
+      }
+    });
+  }
 
   // จำสีของรุ่นนี้ + sync ขึ้น Sheets
   if(model&&color){
@@ -1100,7 +1141,7 @@ function getFilteredRecords(){
     if(fm&&r.model!==fm) return false;
     if(fs&&r.size!==fs)  return false;
     if(fv&&r.severity!==fv) return false;
-    if(fd&&r.defect!==fd)   return false;
+    if(fd && !String(r.defect||"").includes(fd))   return false;
     if(from&&d<from) return false;
     if(to&&d>to)     return false;
     return true;
@@ -1112,7 +1153,7 @@ function clearDateFilter(){ document.getElementById("filter-date-from").value=""
 function renderTable(data){
   const body=document.getElementById("records-body");
   document.getElementById("table-count").textContent=`${data.length} รายการ`;
-  if(!data.length){ body.innerHTML=`<tr><td colspan="12"><div class="empty-state"><div class="icon">📋</div><p>ไม่พบรายการ</p></div></td></tr>`; return; }
+  if(!data.length){ body.innerHTML=`<tr><td colspan="14"><div class="empty-state"><div class="icon">📋</div><p>ไม่พบรายการ</p></div></td></tr>`; return; }
   body.innerHTML=data.map((r,i)=>{
     const sc=r.severity==="มาก"?"sev-chip-high":r.severity==="ปานกลาง"?"sev-chip-mid":"sev-chip-low";
     const em=r.severity==="มาก"?"🔴":r.severity==="ปานกลาง"?"🟡":"🟢";
@@ -1126,9 +1167,11 @@ function renderTable(data){
       <td style="font-size:12px;font-weight:700;white-space:nowrap">${d}</td>
       <td style="font-size:12px;color:var(--text-muted);white-space:nowrap">${t}</td>
       <td><span class="chip chip-purple">${r.model}</span></td>
-      <td><span class="chip chip-gray">${r.size}</span></td>
+      <td class="cell-money">${r.price||"—"}</td>
+      <td class="text-muted" style="font-size:12px">${r.discount||"—"}</td>
+      <td><span class="chip chip-gray cell-long" title="${escAttr(r.size||"")}">${r.size}</span></td>
       <td style="font-weight:600">${r.color}</td>
-      <td><div class="defect-type">${r.defect}</div>${r.note?`<div class="defect-note">${r.note}</div>`:""}</td>
+      <td><div class="defect-type cell-long" title="${escAttr(r.defect||"")}">${r.defect}</div>${r.note?`<div class="defect-note">${r.note}</div>`:""}</td>
       <td><span class="sev-chip ${sc}">${em} ${r.severity}</span></td>
       <td class="text-muted" style="font-size:12px">${r.note||"—"}</td>
       <td class="text-muted" style="font-size:12px;font-weight:600">${r.by}</td>
@@ -1156,11 +1199,11 @@ function updateStats(){
 function exportCSV(){
   const data=getFilteredRecords();
   if(!data.length){ showToast("⚠️ ไม่มีข้อมูล","error"); return; }
-  const headers=["#","วันที่ (UTC+7)","เวลา","ชื่อรุ่น","Size","Color","ประเภทตำหนิ","ระดับ","หมายเหตุ","บันทึกโดย","แก้ไขโดย","Sync Status"];
+  const headers=["#","วันที่ (UTC+7)","เวลา","ชื่อรุ่น","ราคา","ส่วนลด","Size","Color","ประเภทตำหนิ","ระดับ","หมายเหตุ","บันทึกโดย","แก้ไขโดย","Sync Status"];
   const rows=data.map((r,i)=>{
     const d=r.date||splitDT(r.datetime).date;
     const t=r.time||splitDT(r.datetime).time;
-    return [data.length-i,d,t,r.model,r.size,r.color,r.defect,r.severity,r.note||"",r.by,r.updatedBy||"",r.syncStatus||"memory"].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",");
+    return [data.length-i,d,t,r.model,r.price||"",r.discount||"",r.size,r.color,r.defect,r.severity,r.note||"",r.by,r.updatedBy||"",r.syncStatus||"memory"].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",");
   });
   const from=document.getElementById("filter-date-from").value;
   const to=document.getElementById("filter-date-to").value;
