@@ -494,6 +494,8 @@ const DEFAULT_OPTIONS = {
 let CFG={}, OPTIONS={}, records=[];
 let currentUser=null, selectedSeverity="", editingSeverity="";
 let pendingDeleteId=null, editingId=null;
+let autoSyncTimer=null;
+let isLoadingRecords=false;
 
 // ════════════════════════════════════════
 //  STORAGE HELPERS
@@ -627,19 +629,24 @@ async function saveSetup(){
     saveCFG();
   }
 
-  const newModels = document.getElementById("cfg-models").value.split("\n").map(s=>s.trim()).filter(Boolean);
-  OPTIONS.model   = newModels;
-  OPTIONS.size    = document.getElementById("cfg-sizes").value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
-  OPTIONS.colors  = document.getElementById("cfg-colors").value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
-  OPTIONS.modelColors = OPTIONS.modelColors || {};
-  newModels.forEach(m=>{
-    const key = `mc-${btoa(encodeURIComponent(m))}`;
-    const el  = document.getElementById(key);
-    if(el){
-      const colors = el.value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
-      if(colors.length>0) OPTIONS.modelColors[m]=colors;
-    }
-  });
+  const cfgModelsEl = document.getElementById("cfg-models");
+  const cfgSizesEl  = document.getElementById("cfg-sizes");
+  const cfgColorsEl = document.getElementById("cfg-colors");
+  if(cfgModelsEl){
+    const newModels = cfgModelsEl.value.split("\n").map(s=>s.trim()).filter(Boolean);
+    OPTIONS.model   = newModels;
+    if(cfgSizesEl)  OPTIONS.size   = cfgSizesEl.value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+    if(cfgColorsEl) OPTIONS.colors = cfgColorsEl.value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+    OPTIONS.modelColors = OPTIONS.modelColors || {};
+    newModels.forEach(m=>{
+      const key = `mc-${btoa(encodeURIComponent(m))}`;
+      const el  = document.getElementById(key);
+      if(el){
+        const colors = el.value.split(/[,\n]/).map(s=>s.trim()).filter(Boolean);
+        if(colors.length>0) OPTIONS.modelColors[m]=colors;
+      }
+    });
+  }
 
   rebuildDropdowns();
   updateSyncBadge();
@@ -680,8 +687,9 @@ async function syncRecord(record){
     const res=await fetch(CFG.scriptUrl,{method:"POST",body:JSON.stringify({action:"add",record})});
     const data=await res.json();
     record.syncStatus=data.success?"synced":"fail";
+    if(data.success) await loadRecordsFromSheet(false);
   }catch(e){ record.syncStatus="fail"; }
-  saveRecords(); updateSyncBadge(); renderTable(getFilteredRecords());
+  saveRecords(); updateSyncBadge(); renderTable(getFilteredRecords()); updateStats();
 }
 
 async function syncUpdate(record){
@@ -690,14 +698,17 @@ async function syncUpdate(record){
     const res=await fetch(CFG.scriptUrl,{method:"POST",body:JSON.stringify({action:"update",record})});
     const data=await res.json();
     record.syncStatus=data.success?"synced":"fail";
+    if(data.success) await loadRecordsFromSheet(false);
   }catch(e){ record.syncStatus="fail"; }
-  saveRecords(); updateSyncBadge(); renderTable(getFilteredRecords());
+  saveRecords(); updateSyncBadge(); renderTable(getFilteredRecords()); updateStats();
 }
 
 async function syncDelete(id){
   if(!CFG.scriptUrl) return;
   try{
-    await fetch(CFG.scriptUrl,{method:"POST",body:JSON.stringify({action:"delete",id})});
+    const res=await fetch(CFG.scriptUrl,{method:"POST",body:JSON.stringify({action:"delete",id})});
+    const data=await res.json();
+    if(data.success) await loadRecordsFromSheet(false);
   }catch(e){}
 }
 
@@ -710,8 +721,10 @@ async function retrySync(){
   document.getElementById("sync-text").textContent="กำลัง sync...";
   for(const r of pending) await syncRecord(r);
   const still=records.filter(r=>r.syncStatus!=="synced"&&r.syncStatus!=="memory").length;
-  if(!still) showToast("✅ Sync ครบแล้ว","success");
-  else showToast(`⚠️ Sync ไม่สำเร็จ ${still} รายการ`,"error");
+  if(!still){
+    await loadRecordsFromSheet(false);
+    showToast("✅ Sync ครบแล้ว","success");
+  } else showToast(`⚠️ Sync ไม่สำเร็จ ${still} รายการ`,"error");
 }
 
 // ════════════════════════════════════════
@@ -870,11 +883,12 @@ async function loginSuccess(u, errEl){
   document.getElementById("user-display").textContent=u;
   document.getElementById("user-avatar").textContent=u[0].toUpperCase();
   renderTable(records); updateStats(); updateSyncBadge();
-  // โหลด Options จาก Sheets อัตโนมัติหลัง login
-  await loadOptionsFromSheet(false);
+  // โหลด Options + Records จาก Sheets อัตโนมัติหลัง login
+  await startAutoSync();
 }
 
 function doLogout(){
+  stopAutoSync();
   currentUser=null;
   document.getElementById("app").style.display="none";
   document.getElementById("login-screen").style.display="flex";
@@ -1171,6 +1185,60 @@ function showToast(msg,type=""){
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.className="",3500);
 }
 
+
+// ════════════════════════════════════════
+//  LOAD RECORDS / AUTO SYNC FROM SHEETS
+// ════════════════════════════════════════
+async function loadRecordsFromSheet(showToastOnSuccess=false){
+  if(!CFG.scriptUrl || isLoadingRecords) return false;
+  isLoadingRecords = true;
+  const badge=document.getElementById("sync-badge");
+  const dot=document.getElementById("sync-dot");
+  const txt=document.getElementById("sync-text");
+  try{
+    if(badge && txt){
+      badge.className="sync-badge syncing";
+      if(dot) dot.className="sync-dot pulse";
+      txt.textContent="กำลัง sync...";
+    }
+    const res  = await fetch(`${CFG.scriptUrl}?action=get&_=${Date.now()}`);
+    const data = await res.json();
+    if(data.success && Array.isArray(data.records)){
+      records = data.records.map(r=>({ ...r, syncStatus:r.syncStatus||"synced" }));
+      renderTable(getFilteredRecords());
+      updateStats();
+      updateSyncBadge();
+      if(showToastOnSuccess) showToast(`✅ โหลดรายการจาก Sheets แล้ว (${records.length} รายการ)`,"success");
+      return true;
+    }
+    throw new Error(data.error || "โหลดรายการไม่ได้");
+  }catch(e){
+    if(badge && txt){
+      badge.className="sync-badge error";
+      if(dot) dot.className="sync-dot";
+      txt.textContent="Sync error";
+    }
+    if(showToastOnSuccess) showToast("⚠️ โหลดรายการจาก Sheets ไม่ได้","error");
+    return false;
+  }finally{
+    isLoadingRecords=false;
+  }
+}
+
+async function startAutoSync(){
+  await loadOptionsFromSheet(false);
+  await loadRecordsFromSheet(true);
+  stopAutoSync();
+  autoSyncTimer = setInterval(async ()=>{
+    await loadOptionsFromSheet(false);
+    await loadRecordsFromSheet(false);
+  }, 30000);
+}
+
+function stopAutoSync(){
+  if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer=null; }
+}
+
 // ════════════════════════════════════════
 //  LOAD OPTIONS FROM SHEETS
 // ════════════════════════════════════════
@@ -1201,6 +1269,7 @@ async function loadOptionsFromSheet(showStatus=false){
 
 async function reloadOptions(){
   await loadOptionsFromSheet(true);
+  await loadRecordsFromSheet(true);
 }
 
 init();
