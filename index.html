@@ -403,7 +403,11 @@
         </div>
         <div class="field">
           <label>Size / รายละเอียดไซซ์ *</label>
-          <textarea id="f-size" placeholder="เช่น M อก 39 แนะนำ -45 ต้นแขน 13-18 ความยาว 22.5"></textarea>
+          <div class="combo-wrap" id="combo-size">
+            <input class="combo-input" type="text" placeholder="เลือกหรือพิมพ์ไซซ์ เช่น M อก 39 แนะนำ -45 ต้นแขน 13-18 ความยาว 22.5" autocomplete="off" id="f-size" oninput="comboFilter('size')" onfocus="comboOpen('size')" onblur="comboBlur('size')">
+            <span class="combo-arrow">▾</span>
+            <div class="combo-dropdown" id="drop-size"></div>
+          </div>
         </div>
         <div class="field">
           <label>Color *</label>
@@ -828,7 +832,7 @@ function init(){
   document.getElementById("login-pass").addEventListener("keydown",e=>{ if(e.key==="Enter") doLogin(); });
   document.getElementById("login-user").addEventListener("keydown",e=>{ if(e.key==="Enter") document.getElementById("login-pass").focus(); });
   document.addEventListener("click",e=>{
-    ["model","color","defect"].forEach(f=>{ if(!document.getElementById(`combo-${f}`).contains(e.target)) document.getElementById(`combo-${f}`).classList.remove("open"); });
+    ["model","size","color","defect"].forEach(f=>{ if(!document.getElementById(`combo-${f}`).contains(e.target)) document.getElementById(`combo-${f}`).classList.remove("open"); });
   });
 }
 
