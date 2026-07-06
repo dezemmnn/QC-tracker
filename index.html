@@ -512,7 +512,7 @@ function loadAll(){
 function saveCFG(){ localStorage.setItem(LS.CONFIG,JSON.stringify(CFG)); }
 function saveRecords(){ localStorage.setItem(LS.RECORDS,JSON.stringify(records)); }
 
-// บันทึก Options ขึ้น Google Sheets (ทุกคนเห็นเหมือนกัน)
+// บันทึก Options ทั้งหมดขึ้น Sheets (admin กด ⚙️ ตั้งค่า)
 async function saveOptions(){
   if(!CFG.scriptUrl) return false;
   try{
@@ -523,6 +523,17 @@ async function saveOptions(){
     const data = await res.json();
     return data.success;
   }catch(e){ return false; }
+}
+
+// เพิ่ม option เดี่ยวๆ โดยไม่ลบของเก่าใน Sheets
+async function addOptionToSheets(type, value, extra=""){
+  if(!CFG.scriptUrl || !value) return;
+  try{
+    await fetch(CFG.scriptUrl,{
+      method:"POST",
+      body: JSON.stringify({ action:"addOption", type, value, extra })
+    });
+  }catch(e){}
 }
 
 // ════════════════════════════════════════
@@ -769,9 +780,14 @@ function comboAddNew(field,value){
   document.getElementById(`combo-${field}`).classList.remove("open");
   if(field==="model") onModelChange();
   showToast(`✨ เพิ่ม "${value}" แล้ว — กำลัง sync...`,"success");
-  saveOptions().then(ok=>{
-    if(ok) showToast(`✅ "${value}" sync ขึ้น Sheets แล้ว`,"success");
-  });
+  // เพิ่มเฉพาะตัวนี้ขึ้น Sheets โดยไม่ลบของเก่า
+  if(field==="color"){
+    const model=document.getElementById("f-model").value.trim();
+    if(model) addOptionToSheets("modelColor", value, model);
+    else addOptionToSheets("color", value);
+  } else {
+    addOptionToSheets(field, value);
+  }
 }
 
 // ════════════════════════════════════════
@@ -907,25 +923,26 @@ async function submitRecord(){
   saveRecords();
 
   // 2. อัพเดท model colors อัตโนมัติ — จำว่ารุ่นนี้เคยใช้สีนี้
-  let optChanged = false;
+  // เพิ่มเฉพาะตัวใหม่ใน Sheets โดยไม่ลบของเก่า
+  if(model && !( OPTIONS.model||[]).includes(model)){
+    if(!OPTIONS.model) OPTIONS.model=[];
+    OPTIONS.model.push(model);
+    addOptionToSheets("model", model);
+  }
+  if(size && !(OPTIONS.size||[]).includes(size)){
+    if(!OPTIONS.size) OPTIONS.size=[];
+    OPTIONS.size.push(size);
+    addOptionToSheets("size", size);
+  }
   if(model && color){
     if(!OPTIONS.modelColors) OPTIONS.modelColors={};
     if(!OPTIONS.modelColors[model]) OPTIONS.modelColors[model]=[];
     if(!OPTIONS.modelColors[model].includes(color)){
       OPTIONS.modelColors[model].push(color);
       OPTIONS.modelColors[model].sort((a,b)=>a.localeCompare(b,'th'));
-      optChanged = true;
+      addOptionToSheets("modelColor", color, model);
     }
   }
-  ["model","size"].forEach(f=>{
-    if(record[f]&&!(OPTIONS[f]||[]).includes(record[f])){
-      if(!OPTIONS[f]) OPTIONS[f]=[];
-      OPTIONS[f].push(record[f]);
-      OPTIONS[f].sort((a,b)=>a.localeCompare(b,'th'));
-      optChanged = true;
-    }
-  });
-  if(optChanged) saveOptions();
 
   renderTable(getFilteredRecords()); updateStats();
   btn.disabled=false; label.textContent="บันทึกข้อมูล";
@@ -1037,7 +1054,7 @@ async function saveEdit(){
     if(!OPTIONS.modelColors[model].includes(color)){
       OPTIONS.modelColors[model].push(color);
       OPTIONS.modelColors[model].sort((a,b)=>a.localeCompare(b,'th'));
-      saveOptions();
+      addOptionToSheets("modelColor", color, model);
     }
   }
 
