@@ -1253,10 +1253,19 @@ async function loadOptionsFromSheet(showStatus=false){
       const o = data.options;
       if(o.model  && o.model.length)  OPTIONS.model  = o.model;
       if(o.size   && o.size.length)   OPTIONS.size   = o.size;
-      if(o.color  && o.color.length)  OPTIONS.color  = o.color;
+
+      // Apps Script บางเวอร์ชันส่ง key เป็น color, บางเวอร์ชันส่ง colors
+      // ถ้าในชีทไม่มี global color ให้คง fallback เดิมไว้ และยังใช้ modelColors ได้ตามปกติ
+      const sheetColors = (o.colors && o.colors.length) ? o.colors : ((o.color && o.color.length) ? o.color : null);
+      if(sheetColors){
+        OPTIONS.color = sheetColors;
+        OPTIONS.colors = sheetColors;
+      }else if(!OPTIONS.colors || !OPTIONS.colors.length){
+        OPTIONS.colors = DEFAULT_OPTIONS.colors;
+      }
+
       if(o.defect && o.defect.length) OPTIONS.defect = o.defect;
       if(o.modelColors) OPTIONS.modelColors = o.modelColors;
-      OPTIONS.colors = OPTIONS.color; // alias
       rebuildDropdowns();
       if(statusEl) statusEl.textContent = "✅ โหลดแล้ว " + new Date().toLocaleTimeString('th-TH');
       if(showStatus) showToast("✅ โหลด Dropdown จาก Sheets แล้ว","success");
